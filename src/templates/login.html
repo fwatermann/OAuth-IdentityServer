@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>{{serviceName}} | Login</title>
+        <link rel="stylesheet" href="/assets/css/login.css">
+        <script src="https://cdn.w-mi.de/jquery/jquery_v3.6.0/jquery.min.js"></script>
+        <script src="/assets/js/login.js" type="module"></script>
+        <style>
+            body {
+                background-size: auto;
+                background-position-x: 10px;
+                background-position-y: 10px;
+                background-repeat: no-repeat;
+                background-image: url("{{serviceIcon}}");
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <img draggable="false" src="{{logo_url}}" alt="Service Logo">
+                    <h1>Login</h1>
+                </div>
+                <div class="card-body">
+                    <input type="text" name="username" placeholder="Benutzername" value="{{username}}">
+                    <input type="password" name="password" placeholder="Passwort">
+                    <input type="submit" value="Login">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

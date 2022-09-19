@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+((DNI:
+
+Platzhalter:
+- clientName
+- clientIconURL
+- clientActiveSince
+- userDisplayName
+- userIconURL
+- scopesDescriptions (Array)
+- jokeScopes (Array)
+- csrf
+- client_id
+- redirect_uri
+- response_type
+- scope
+- state
+
+
+:DNI))
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>{{serviceName}} | Autorisieren</title>
+        <link rel="stylesheet" href="/assets/css/authorize.css">
+        <link rel="stylesheet" href="/assets/css/tooltip.css">
+        <style>
+            body {
+                background-size: auto;
+                background-position-x: 10px;
+                background-position-y: 10px;
+                background-repeat: no-repeat;
+                background-image: url("{{serviceIcon}}");
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <img draggable="false" src="{{clientIconURL}}" alt="Client">
+                    <div class="dots">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    <img draggable="false" src="{{userIconURL}}" alt="User">
+                </div>
+                <div class="card-body">
+                    <div class="clientName">
+                        <span>Die Anwendung</span>
+                        <h1>{{clientName}}</h1>
+                        <span>möchte auf deinen Account zugreifen</span>
+                    </div>
+                    <div class="userInfo">
+                        <span>Angemeldet als <b>{{userDisplayName}}</b> <a href="/logout">Nicht du?</a></span>
+                    </div>
+                    <hr>
+                    <div class="permissions">
+                        <span>Die Anwendung möchte folgende Berechtigungen:</span>
+                        <div class="scope-list">
+                            {{#scopesDescriptions}}
+                            <div class="granted">
+                                <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/check-circle.svg" alt="✅">
+                                <span class="tooltipped">{{this.name}}<span class="tooltip">{{this.description}}</span></span>
+                            </div>
+                            {{/scopesDescriptions}}
+                            {{#jokeScopes}}
+                            <div class="not_granted">
+                                <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/times-circle.svg" alt="❌">
+                                <span>{{this}}</span>
+                            </div>
+                            {{/jokeScopes}}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="clientInfo">
+                        <div>
+                            <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/link.svg" alt="↗️">
+                            <span>Nach der Autorisierung wirst du weitergeleitet zu: <br>{{redirect_uri}}</span>
+                        </div>
+                        <div>
+                            <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/clock.svg" alt="🕒">
+                            <span>Die Anwendung ist seit {{clientActiveSince}} aktiv.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button id="btn_deny">Abbruch</button>
+                    <button id="btn_authorize">Autorisieren</button>
+                </div>
+                <form id="auth_form" method="POST">
+                    <input type="hidden" name="csrf" value="{{csrf}}">
+                    <input type="hidden" name="cancel" value="cancel">
+                    <input type="hidden" name="client_id" value="{{client_id}}">
+                    <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+                    <input type="hidden" name="response_type" value="{{response_type}}">
+                    <input type="hidden" name="scope" value="{{scope}}">
+                    <input type="hidden" name="state" value="{{state}}">
+                </form>
+            </div>
+        </div>
+
+        <script src="https://cdn.w-mi.de/jquery/jquery_v3.6.0/jquery.min.js"></script>
+        <script src="/assets/js/authorize.js"></script>
+    </body>
+</html>
