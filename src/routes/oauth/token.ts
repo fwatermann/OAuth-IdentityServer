@@ -9,6 +9,33 @@ export default router;
 
 router.get("/validate", async(req, res, next) => {
 
+    if(req.headers.authorization) {
+        let token = req.headers.authorization;
+        if(!token.startsWith("Bearer ")) {
+            res.send(401).json(UNAUTHORIZED("Invalid token", "The provided token is invalid. (Prefix must be \"Bearer\")"));
+            return;
+        }
+        token = token.split(" ", 2)[1];
+        if(!token) {
+            res.send(401).json(UNAUTHORIZED("Invalid token", "The token provided in authorization header is invalid."));
+            return;
+        }
+        let oauthToken = await OAuth.Token.get(token);
+        console.log(`Token: "${token}"`);
+        if(!oauthToken || oauthToken.expires < Date.now()) {
+            res.status(401).json(UNAUTHORIZED("Invalid token", "The token provided in authorization header is invalid."));
+            return;
+        }
+        res.status(200).json({
+            client_id: oauthToken.clientId,
+            scopes: oauthToken.scope,
+            userId: oauthToken.userId,
+            expires_at: oauthToken.expires
+        });
+    } else {
+        res.status(400).json(BAD_REQUEST("Bad request", "Token must be provided in authorization header!"));
+        return;
+    }
 
 });
 

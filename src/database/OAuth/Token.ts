@@ -44,7 +44,7 @@ export async function create(type: OAuthTokenType, scope: string[], clientId: st
 }
 
 export async function get(token: string) : Promise<OAuthToken|null> {
-    let response = await db.query("SELECT * FROM OAuth__Tokens WHERE token = ?", [token]);
+    let response = await db.query("SELECT * FROM OAuth__Tokens WHERE token = ? AND tokenExpires > current_timestamp", [token]);
     if(response.error) {
         throw new Error(response.error_message);
     }
