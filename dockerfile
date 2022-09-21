@@ -5,6 +5,7 @@ COPY ./*.json /app/
 RUN npm ci
 
 COPY ./src /app/src
+COPY ./config.template.json /app/src/config/config.json
 COPY ./*.* /app
 RUN npm install typescript -g
 RUN npm run unix-build
