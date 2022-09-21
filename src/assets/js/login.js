@@ -14,31 +14,40 @@ function login() {
             if(xhr.status === 200 && data.ok === true) {
                 postLogin(true, data.redirect_uri);
             } else {
-                postLogin(false, null);
+                postLogin(false, null, "Invalid username and/or password.");
             }
         },
         error: (xhr, status, error) => {
-            postLogin(false, null);
+            postLogin(false, null, "Invalid username and/or password.");
         }
     });
 }
 
 function preLogin() {
-    $("input[type=text]").prop("disabled", true);
-    $("input[type=password]").prop("disabled", true);
-    $("input[type=submit]").prop("disabled", true);
-    login();
+    let username = $("input[name=username]").val();
+    let password = $("input[name=password]").val();
+
+    if(!username || username == "") {
+        postLogin(false, null, "Username missing.");
+        return;
+    }
+
+    if(!password || password == "") {
+        postLogin(false, null, "Password missing.");
+        return;
+    }
+
+    $(".card-overlay").removeClass("d-none");
+    setTimeout(() => login(), 500);
 }
 
-function postLogin(success, redirectURI) {
-    $("input[type=text]").prop("disabled", false);
-    $("input[type=password]").prop("disabled", false);
-    $("input[type=submit]").prop("disabled", false);
+function postLogin(success, redirectURI, message) {
+    $(".card-overlay").addClass("d-none");
 
     if(success) {
         window.location.href = redirectURI;
     } else {
-        alert("Login failed!");
+        $("span.error_message").text(message);
     }
 }
 
@@ -48,7 +57,7 @@ function init() {
             preLogin();
         }
     });
-    $("input[type=submit]").click((e) => {
+    $("button.login_btn").click((e) => {
         preLogin();
     });
 }
