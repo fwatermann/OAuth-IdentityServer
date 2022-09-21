@@ -17,6 +17,7 @@ body {
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     border-radius: 5px;
     padding: 50px;
+    background-color: #ffffff;
 }
 .card-header {
     display: flex;
