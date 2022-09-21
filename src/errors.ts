@@ -7,7 +7,7 @@ export type API_ERROR = {
     info?: any
 }
 
-export function BAD_REQUEST(message: string, description: string, info?: any) : API_ERROR {
+export function BAD_REQUEST(message: string, description?: string, info?: any) : API_ERROR {
     return {
         code: 400,
         error: "Bad Request",
@@ -17,7 +17,7 @@ export function BAD_REQUEST(message: string, description: string, info?: any) : 
     }
 }
 
-export function UNAUTHORIZED(message: string, description: string, info?: any) : API_ERROR {
+export function UNAUTHORIZED(message: string, description?: string, info?: any) : API_ERROR {
     return {
         code: 401,
         error: "Unauthorized",
@@ -27,7 +27,7 @@ export function UNAUTHORIZED(message: string, description: string, info?: any) :
     }
 }
 
-export function NOT_FOUND(message: string, description: string, info?: any) : API_ERROR {
+export function NOT_FOUND(message: string, description?: string, info?: any) : API_ERROR {
     return {
         code: 404,
         error: "Not Found",
@@ -37,7 +37,19 @@ export function NOT_FOUND(message: string, description: string, info?: any) : AP
     }
 }
 
-export function INTERNAL_SERVER_ERROR(message: string, description: string, info?: any) : API_ERROR {
+export function METHOD_NOT_ALLOWED(message: string, description?: string, allowed?: string[]) : API_ERROR {
+    return {
+        code: 405,
+        error: "Method not allowed",
+        message: message,
+        description: description,
+        info: {
+            allowed: allowed
+        }
+    }
+}
+
+export function INTERNAL_SERVER_ERROR(message: string, description?: string, info?: any) : API_ERROR {
     return {
         code: 500,
         error: "Internal Server Error",

@@ -104,5 +104,6 @@ dist
 .tern-port
 
 .idea
+.ignore
 
 config.json

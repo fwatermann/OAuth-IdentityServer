@@ -4,6 +4,7 @@ import * as OAuthDB from "../database/OAuthDB";
 import * as Errors from "../errors";
 import {OAuthUser} from "../database/OAuth/User";
 import config from "../config/config.json";
+import {METHOD_NOT_ALLOWED} from "../errors";
 
 const router = express.Router();
 export default router;
@@ -55,4 +56,8 @@ router.post("/", async (req, res, next) => {
         next(e);
     }
 
+});
+
+router.all("/", (req, res, next) => {
+    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
 });

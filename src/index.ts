@@ -4,7 +4,7 @@ import routerLogout from "./routes/logout";
 import routerOAuth from "./routes/oauth";
 import path from "path";
 import cookieParser from "cookie-parser";
-import {INTERNAL_SERVER_ERROR} from "./errors";
+import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./errors";
 import * as OAuthDB from "./database/OAuthDB";
 import config from "./config/config.json";
 import morgan from "morgan";
@@ -46,8 +46,6 @@ app.use(async (req, res, next) => {
     next();
 });
 
-console.log(path.join(__dirname, "assets"));
-
 app.use("/assets/", express.static(path.join(__dirname, "assets"), {
     etag: false,
     index: "index.html",
@@ -64,8 +62,9 @@ function errorHandler(err: any, req: Request, res: Response, next: NextFunction)
 }
 
 app.use(errorHandler);
+app.use((req, res, next) => res.status(404).json(NOT_FOUND("Page/Endpoint not found.", "The requested url does not exist.")))
 
-app.listen(8080, () => {
+app.listen(config.server.port, () => {
     OAuthDB.setup();
     console.log("Listening...");
 });

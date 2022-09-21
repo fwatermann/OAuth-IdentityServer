@@ -3,7 +3,7 @@ import crypto from "crypto";
 import template from "../../templates/templates";
 import config from "../../config/config.json";
 import * as OAuth from "../../database/OAuthDB";
-import {BAD_REQUEST, INTERNAL_SERVER_ERROR, UNAUTHORIZED} from "../../errors";
+import {BAD_REQUEST, INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED, UNAUTHORIZED} from "../../errors";
 import {OAuthTokenScopeInfo} from "../../database/OAuth/Token";
 import {Encoding} from "crypto";
 
@@ -173,6 +173,10 @@ router.post("/", async (req, res) => {
         res.status(400).json(BAD_REQUEST("Invalid Request", "Provided response type is invalid. Use either \"code\" for Authorization Code Flow or \"token\" for Implicit Grant Flow."));
         return;
     }
+});
+
+router.all("/", (req, res, next) => {
+    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
 });
 
 function generateCSRFToken() : string {

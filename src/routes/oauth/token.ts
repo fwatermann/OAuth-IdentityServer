@@ -1,5 +1,5 @@
 import express from "express";
-import {BAD_REQUEST, NOT_FOUND, UNAUTHORIZED} from "../../errors";
+import {BAD_REQUEST, METHOD_NOT_ALLOWED, NOT_FOUND, UNAUTHORIZED} from "../../errors";
 import * as OAuth from "../../database/OAuthDB";
 import {OAuthClient} from "../../database/OAuth/Client";
 import config from "../../config/config.json";
@@ -82,6 +82,14 @@ router.post("/", async (req, res, next) => {
         return;
     }
 
+});
+
+router.all("/", (req, res, next) => {
+    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["POST"]));
+});
+
+router.all("/validate", (req, res, next) => {
+    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET"]));
 });
 
 async function handleAuthCodeRequest(req: express.Request, res: express.Response, next: express.NextFunction, client: OAuthClient) {
