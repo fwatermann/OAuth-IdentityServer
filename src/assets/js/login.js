@@ -12,13 +12,13 @@ function login() {
         },
         success: (data, status, xhr) => {
             if(xhr.status === 200 && data.ok === true) {
-                postLogin(true, data.redirect_uri);
+                postLogin(true, data.mfa??false, data.redirect_uri);
             } else {
-                postLogin(false, null, "Invalid username and/or password.");
+                postLogin(false, false, null, "Invalid username and/or password.");
             }
         },
         error: (xhr, status, error) => {
-            postLogin(false, null, "Invalid username and/or password.");
+            postLogin(false, false, null, "Invalid username and/or password.");
         }
     });
 }
@@ -41,7 +41,7 @@ function preLogin() {
     setTimeout(() => login(), 500);
 }
 
-function postLogin(success, redirectURI, message) {
+function postLogin(success, mfa, redirectURI, message) {
     $(".card-overlay").addClass("d-none");
 
     if(success) {
@@ -49,6 +49,12 @@ function postLogin(success, redirectURI, message) {
     } else {
         $("span.error_message").text(message);
     }
+}
+
+function do2Factor() {
+    $(".step_credentials").addClass("d-none");
+    $(".step_2fa").removeClass("d-none");
+    $(".step_2fa > .twoFA_input > input:first-child").focus();
 }
 
 function init() {
@@ -60,6 +66,42 @@ function init() {
     $("button.login_btn").click((e) => {
         preLogin();
     });
+
+    document.querySelectorAll(".twoFA_input > input[type=number]").forEach((e) => {
+        e.addEventListener("input", (event) => {
+            e.value = event.data;
+            if(!event.data) {
+                e.previousElementSibling?.focus();
+            } else {
+                e.nextElementSibling?.focus();
+            }
+        });
+        e.addEventListener("paste", (event) => {
+            const allowedChars = "0123456789";
+            event.preventDefault();
+            let next = e;
+            while(next.previousElementSibling) next = e.previousElementSibling;
+            let content = event.clipboardData.getData("text");
+            for(let i = 0; i < 6; i ++) {
+                if(allowedChars.indexOf(content.charAt(i)) >= 0) {
+                    next.focus();
+                    next.value = content.charAt(i);
+                }
+                next = next.nextElementSibling;
+            }
+        });
+
+        e.addEventListener("keydown", (event) => {
+
+            if(e.value?.length <= 0) {
+                if(event.key == "Backspace") {
+                    e.previousElementSibling?.focus();
+                }
+            }
+
+        });
+    });
+
 }
 
 init();

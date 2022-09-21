@@ -63,3 +63,38 @@ span.error_message {
 .login_links a:hover {
     text-decoration: underline;
 }
+
+.step_2fa > span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.twoFA_input {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 2px;
+}
+
+.twoFA_input input[type=number] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    text-align: center;
+    font-size: 24px;
+    padding: 15px 10px;
+    border: solid 4px #88888888;
+    border-radius: 10px;
+}
+
+.twoFA_input input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+.twoFA_input input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}

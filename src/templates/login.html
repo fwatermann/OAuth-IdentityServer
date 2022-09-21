@@ -26,7 +26,7 @@
                     <img draggable="false" src="{{logo_url}}" alt="Service Logo">
                     <h1>Login</h1>
                 </div>
-                <div class="card-body">
+                <div class="card-body step_credentials">
                     <span class="error_message"></span>
                     <input type="text" name="username" placeholder="Benutzername" value="{{username}}">
                     <input type="password" name="password" placeholder="Passwort">
@@ -34,6 +34,21 @@
                     <div class="login_links">
                         <a href="/register">Register</a>
                         <a href="/forgot_password">Forgot password?</a>
+                    </div>
+                </div>
+                <div class="card-body step_2fa d-none">
+                    <span>Please enter your 2FA Token:</span>
+                    <div class="twoFA_input">
+                        <input type="number" name="digit_0" min="0" max="9" maxlength="1" placeholder="X" autofocus>
+                        <input type="number" name="digit_1" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_2" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_3" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_4" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_5" min="0" max="9" maxlength="1" placeholder="X">
+                    </div>
+                    <button class="login_btn">Verify</button>
+                    <div class="login_links">
+                        <a href="/forgot_2fa">No access to 2FA?</a>
                     </div>
                 </div>
                 <div class="card-overlay d-none">
