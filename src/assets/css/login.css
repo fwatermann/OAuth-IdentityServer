@@ -38,8 +38,8 @@ button.login_btn {
     cursor: pointer;
 }
 
-input[type=submit]:hover {
-    background-color: #45a049;
+button.login_btn:hover {
+    background-color: #327536;
 }
 
 span.error_message {
@@ -47,4 +47,19 @@ span.error_message {
     text-align: center;
 }
 
+.login_links {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
 
+.login_links a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.login_links a:hover {
+    text-decoration: underline;
+}
