@@ -15,6 +15,7 @@ WORKDIR /app
 
 COPY --from=building /app/dist /app
 COPY --from=building /app/*.* /app/
+COPY ./config.template.json /app/config.json
 RUN npm install --production
 
 ENV NODE_ENV=production
