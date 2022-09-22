@@ -1,24 +1,32 @@
-function login() {
+function login(mfaToken = null) {
     let username = $("input[name=username]").val();
     let password = $("input[name=password]").val();
 
     let redirect_uri = new URL(window.location.href).searchParams.get("redirect_uri");
+    let bodyData = {
+        username: username,
+        password: password
+    };
+    if(mfaToken) {
+        bodyData.totp = mfaToken;
+    }
 
     $.ajax(`/login${redirect_uri ? "?redirect_uri=" + encodeURIComponent(redirect_uri) : ""}`, {
         method: "POST",
-        data: {
-            username: username,
-            password: password
-        },
+        data: bodyData,
         success: (data, status, xhr) => {
             if(xhr.status === 200 && data.ok === true) {
-                postLogin(true, data.mfa??false, data.redirect_uri);
+                if(data.mfa) {
+                    do2Factor();
+                    return;
+                }
+                postLogin(true, data.redirect_uri);
             } else {
-                postLogin(false, false, null, "Invalid username and/or password.");
+                postLogin(false, false, "Invalid username and/or password.");
             }
         },
         error: (xhr, status, error) => {
-            postLogin(false, false, null, "Invalid username and/or password.");
+            postLogin(false, false, "Invalid username and/or password.");
         }
     });
 }
@@ -41,9 +49,7 @@ function preLogin() {
     setTimeout(() => login(), 500);
 }
 
-function postLogin(success, mfa, redirectURI, message) {
-    $(".card-overlay").addClass("d-none");
-
+function postLogin(success, redirectURI, message) {
     if(success) {
         window.location.href = redirectURI;
     } else {
@@ -52,6 +58,7 @@ function postLogin(success, mfa, redirectURI, message) {
 }
 
 function do2Factor() {
+    $(".card-overlay").addClass("d-none");
     $(".step_credentials").addClass("d-none");
     $(".step_2fa").removeClass("d-none");
     $(".step_2fa > .twoFA_input > input:first-child").focus();
@@ -66,6 +73,18 @@ function init() {
     $("button.login_btn").click((e) => {
         preLogin();
     });
+    $("button.mfa_btn").click((e) => {
+        let token = "";
+        let next = document.querySelector(".twoFA_input > input[type=number]");
+        while(next.previousElementSibling) next = e.previousElementSibling;
+        for(let i = 0; i < 6; i ++) {
+            token += next.value;
+            next = next.nextElementSibling;
+        }
+        console.log(token);
+        $(".card-overlay").removeClass("d-none");
+        setTimeout(() => login(token), 500);
+    })
 
     document.querySelectorAll(".twoFA_input > input[type=number]").forEach((e) => {
         e.addEventListener("input", (event) => {
@@ -81,7 +100,7 @@ function init() {
             event.preventDefault();
             let next = e;
             while(next.previousElementSibling) next = e.previousElementSibling;
-            let content = event.clipboardData.getData("text");
+            let content = event.clipboardData.getData("text").replaceAll(" ", "");
             for(let i = 0; i < 6; i ++) {
                 if(allowedChars.indexOf(content.charAt(i)) >= 0) {
                     next.focus();
