@@ -9,6 +9,7 @@ import * as OAuthDB from "./database/OAuthDB";
 import config from "./config/config.json";
 import morgan from "morgan";
 import helmet from "helmet";
+const node2fa = require("node-2fa");
 
 const app = express();
 
@@ -67,4 +68,9 @@ app.use((req, res, next) => res.status(404).json(NOT_FOUND("Page/Endpoint not fo
 app.listen(config.server.port, () => {
     OAuthDB.setup();
     console.log("Listening...");
+    let secret = node2fa.generateSecret({
+        name: "TPM ID",
+        account: "test"
+    });
+    console.log(secret);
 });

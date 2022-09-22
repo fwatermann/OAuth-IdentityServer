@@ -1,3 +1,6 @@
+@import "card.css";
+@import "spinner.css";
+
 body {
     padding: 0;
     margin: 0;
@@ -10,30 +13,6 @@ body {
     width: 100vW;
     height: 100vH;
 }
-.card {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    border-radius: 5px;
-    padding: 50px;
-    background-color: #ffffff;
-}
-.card-header {
-    display: flex;
-    width: 100%;
-    flex-flow: row nowrap;
-    align-items: center;
-    margin-bottom: 20px;
-    user-select: none;
-    justify-content: space-between;
-}
-.card-body {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-}
-
 .card-header img {
     width: 100px;
     margin-right: 10px;
@@ -49,7 +28,7 @@ input[type=text], input[type=password] {
     box-sizing: border-box;
 }
 
-input[type=submit] {
+button.login_btn {
     width: 100%;
     background-color: #4CAF50;
     color: white;
@@ -59,6 +38,77 @@ input[type=submit] {
     cursor: pointer;
 }
 
-input[type=submit]:hover {
-    background-color: #45a049;
+button.mfa_btn:hover {
+    background-color: #327536;
+}
+
+button.mfa_btn {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+}
+
+button.login_btn:hover {
+    background-color: #327536;
+}
+
+span.error_message {
+    color: #ff2828;
+    text-align: center;
+}
+
+.login_links {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.login_links a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.login_links a:hover {
+    text-decoration: underline;
+}
+
+.step_2fa > span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.twoFA_input {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 2px;
+}
+
+.twoFA_input input[type=number] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    text-align: center;
+    font-size: 24px;
+    padding: 15px 10px;
+    border: solid 4px #88888888;
+    border-radius: 10px;
+}
+
+.twoFA_input input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+.twoFA_input input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
