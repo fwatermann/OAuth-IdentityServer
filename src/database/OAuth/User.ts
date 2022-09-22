@@ -7,6 +7,8 @@ export type OAuthUser = {
     displayName: string,
     passwordHash: string,
     email: string,
+    mfa: boolean,
+    mfa_secret?: string,
     created: number,
     updated: number
 }
@@ -35,6 +37,8 @@ export async function get(userId: string) : Promise<OAuthUser|null> {
         displayName: response.rows[0].displayName,
         passwordHash: response.rows[0].password,
         email: response.rows[0].email,
+        mfa: response.rows[0].mfa == 1,
+        mfa_secret: response.rows[0].mfa_secret,
         created: response.rows[0].created,
         updated: response.rows[0].updated
     }
@@ -48,6 +52,13 @@ export async function checkPassword(username: string, password: string): Promise
     } else {
         if(response.rows.length === 0) return false;
         return response.rows[0].password === passwordHash;
+    }
+}
+
+export async function update2FA(userId: string, enabled: boolean, secret?: string) {
+    let response = await db.update("UPDATE OAuth__User SET `mfa` = ?, `mfa_secret` = ? WHERE `userId` = ?", [enabled ? 1 : 0, secret??"2FA-DISABLED", userId]);
+    if(response.error) {
+        throw new Error(response.error_message);
     }
 }
 
