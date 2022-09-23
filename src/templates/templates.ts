@@ -6,7 +6,7 @@ import config from "../config/config.json";
 import crypto from "crypto";
 
 let cache = new Map();
-export type Templates = "login.html"|"authorize.html";
+export type Templates = "login.html"|"authorize.html"|"account.html";
 
 export type Placeholders<T extends Templates> =
     T extends "login.html"
@@ -30,6 +30,11 @@ export type Placeholders<T extends Templates> =
             response_type: string,
             scope: string,
             state: string
+        } :
+    T extends "account.html"
+        ? {
+            profileAvatar: string,
+            profileDisplayname: string
         } :
     never;
 

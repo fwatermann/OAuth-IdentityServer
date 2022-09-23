@@ -2,6 +2,7 @@ import express, {NextFunction, Request, Response} from "express";
 import routerLogin from "./routes/login";
 import routerLogout from "./routes/logout";
 import routerOAuth from "./routes/oauth";
+import routerAccount from "./routes/account";
 import path from "path";
 import cookieParser from "cookie-parser";
 import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./errors";
@@ -30,6 +31,11 @@ app.use(helmet({
     }
 }));
 
+app.use((req, res, next) => {
+    res.setHeader("Server", config.ui.globalPlaceholder.serviceName.trim() + " Server")
+    next();
+});
+
 
 app.use(express.json({
     strict: true,
@@ -56,6 +62,7 @@ app.use("/assets/", express.static(path.join(__dirname, "assets"), {
 app.use("/login", routerLogin);
 app.use("/logout", routerLogout);
 app.use("/oauth", routerOAuth);
+app.use("/account", routerAccount);
 
 function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
     console.error(err);
@@ -68,9 +75,4 @@ app.use((req, res, next) => res.status(404).json(NOT_FOUND("Page/Endpoint not fo
 app.listen(config.server.port, () => {
     OAuthDB.setup();
     console.log("Listening...");
-    let secret = node2fa.generateSecret({
-        name: "TPM ID",
-        account: "test"
-    });
-    console.log(secret);
 });

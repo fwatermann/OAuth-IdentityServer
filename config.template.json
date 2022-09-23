@@ -41,7 +41,9 @@
     },
     "globalPlaceholder": {
       "serviceName": "AuthService",
-      "serviceIcon": "https://should-be-same-as-logo_url.com"
+      "serviceIcon": "https://should-be-same-as-logo_url.com",
+      "serviceVersion": "0.2.1",
+      "copyrightYear": "2022"
     }
   },
   "oauth": {
