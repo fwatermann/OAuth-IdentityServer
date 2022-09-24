@@ -1,5 +1,5 @@
 import express from "express";
-import template from "../templates/templates";
+import template from "./templates";
 import * as OAuthDB from "../database/OAuthDB";
 import * as Errors from "../errors";
 import {OAuthUser} from "../database/OAuth/User";

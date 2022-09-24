@@ -1,6 +1,6 @@
 import express from "express";
 import crypto from "crypto";
-import template from "../../templates/templates";
+import template from "../templates";
 import config from "../../config/config.json";
 import * as OAuth from "../../database/OAuthDB";
 import {BAD_REQUEST, INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED, UNAUTHORIZED} from "../../errors";

@@ -1,11 +1,13 @@
 ((DNI:
 
 Platzhalter:
-- serviceName
-- profileAvatar
-- profileDisplayname
-- serviceVersion
-- copyrightYear
+- serviceName: string
+- profileAvatar: string
+- profileDisplayname: string
+- serviceVersion: string
+- copyrightYear: string
+- isAdmin: boolean
+- isSupport: boolean
 
 :DNI))
 
@@ -39,22 +41,47 @@ Platzhalter:
                 <ul>
                     <li>
                         <i class="fas fa-tag fa-fw"></i>
-                        <a href="#profile">Profile</a>
+                        <a linkType="menu_1" menu="profile">Profile</a>
                     </li>
                     <li>
                         <i class="fas fa-search fa-fw"></i>
-                        <a href="#details">Details</a>
+                        <a linkType="menu_1" menu="details">Details</a>
                     </li>
                     <li>
                         <i class="fas fa-shield-alt fa-fw"></i>
-                        <a href="#security">Security</a>
+                        <a linkType="menu_1" menu="security">Security</a>
                     </li>
                     <li>
                         <i class="fas fa-unlock-alt fa-fw"></i>
-                        <a href="#access">Access</a>
+                        <a linkType="menu_1" menu="access">Access</a>
                     </li>
-
                 </ul>
+{{?isSupport}}
+                <span class="menu-spacer">Support</span>
+                <ul>
+                    <li>
+                        <i class="fas fa-users fa-fw"></i>
+                        <a linkType="menu_1" menu="support_users">Manage users</a>
+                    </li>
+                </ul>
+{{/isSupport}}
+{{?isAdmin}}
+                <span class="menu-spacer">Administration</span>
+                <ul>
+                    <li>
+                        <i class="fas fa-users fa-fw"></i>
+                        <a linkType="menu_1" menu="admin_users">Manage users</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-server fa-fw"></i>
+                        <a linkType="menu_1" menu="admin_clients">Manage OAuth2-Clients</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-cog fa-fw"></i>
+                        <a linkType="menu_1" menu="admin_settings">Global Settings</a>
+                    </li>
+                </ul>
+{{/isAdmin}}
             </div>
             <div class="menu-footer">
                 <span>Version {{serviceVersion}}</span>

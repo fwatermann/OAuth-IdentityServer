@@ -53,11 +53,13 @@ app.use(async (req, res, next) => {
     next();
 });
 
-app.use("/assets/", express.static(path.join(__dirname, "assets"), {
+app.use("/assets/", express.static(path.join(__dirname, "public", "assets"), {
     etag: false,
     index: "index.html",
     redirect: true
 }));
+
+console.log(path.join(__dirname, "public", "assets"));
 
 app.use("/login", routerLogin);
 app.use("/logout", routerLogout);

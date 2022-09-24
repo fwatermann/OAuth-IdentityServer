@@ -1,6 +1,6 @@
-@import "./card.css";
-@import "./spinner.css";
-@import "./tooltip.css";
+@import "card.css";
+@import "spinner.css";
+@import "tooltip.css";
 
 body {
     padding: 0;
@@ -71,14 +71,21 @@ body {
 
 .menu-body {
     display: flex;
+    flex-flow: column nowrap;
     flex-grow: 1;
+}
+
+.menu-spacer {
+    width: 100%;
+    border-top: 1px solid #ffffff44;
+    padding: 10px 0 0 10px;
+    color: #ffffff66;
 }
 
 .menu-body ul {
     list-style: none;
     padding: 0;
     margin-right: 5px;
-    flex-grow: 1;
 }
 
 .menu-body ul > li {
@@ -102,7 +109,7 @@ body {
     color: #000000;
 }
 
-.menu-body ul > li:hover {
+.menu-body ul > li:not(.active):hover {
     border-radius: 0 5px 5px 0;
     background-color: #ffffff44;
 }
