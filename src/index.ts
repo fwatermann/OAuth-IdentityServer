@@ -2,7 +2,7 @@ import express, {NextFunction, Request, Response} from "express";
 import routerLogin from "./routes/login";
 import routerLogout from "./routes/logout";
 import routerOAuth from "./routes/oauth";
-import routerAccount from "./routes/account";
+import routerAccount from "./routes/settings";
 import path from "path";
 import cookieParser from "cookie-parser";
 import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./errors";
@@ -64,7 +64,7 @@ console.log(path.join(__dirname, "public", "assets"));
 app.use("/login", routerLogin);
 app.use("/logout", routerLogout);
 app.use("/oauth", routerOAuth);
-app.use("/account", routerAccount);
+app.use("/settings", routerAccount);
 
 function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
     console.error(err);

@@ -6,7 +6,7 @@ const router = express.Router();
 export default router;
 
 router.get("/", (req, res, next) => {
-    template("account.html", {
+    template("settings.html", {
         profileAvatar: "https://cdn.w-mi.de/shorturl/images/user.png",
         profileDisplayname: "Test Account #1",
         isSupport: true,
@@ -30,7 +30,7 @@ router.get("/page/:page", (req, res, next) => {
 
     switch(page) {
         case "profile":
-            template("account/profile.html", {}, req, res, next);
+            template("settings/profile.html", {}, req, res, next);
             return;
         default:
             next();

@@ -1,6 +1,7 @@
 @import "card.css";
 @import "spinner.css";
 @import "tooltip.css";
+@import "buttons.css";
 
 body {
     padding: 0;
@@ -145,10 +146,36 @@ body {
 
 .container-head {
     display: flex;
+    flex-flow: row nowrap;
     height: 60px;
     background-color: #ffffff;
     box-shadow: 0 0 5px #00000088;
+    padding: 0 10px;
 }
+
+/*
+    BEGIN: Navbar
+ */
+
+.navbar-left {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.navbar-right {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 0;
+}
+
+/*
+    END: Navbar
+ */
 
 .container-body {
     display: flex;

@@ -12,8 +12,8 @@ export type FilledPage = {
 }
 
 let cache = new Map();
-export type AccountPages = "account/profile.html";
-export type Templates = "login.html"|"authorize.html"|"account.html"|AccountPages;
+export type SettingsPages = "settings.html"|"settings/profile.html";
+export type Templates = "login.html"|"authorize.html"|SettingsPages;
 
 export type Placeholders<T extends Templates> =
     T extends "login.html"
@@ -38,14 +38,14 @@ export type Placeholders<T extends Templates> =
             scope: string,
             state: string
         } :
-    T extends "account.html"
+    T extends "settings.html"
         ? {
             profileAvatar: string,
             profileDisplayname: string,
             isSupport: boolean,
             isAdmin: boolean,
         } :
-    T extends "account/profile.html"
+    T extends "settings/profile.html"
         ? {
 
         } :
