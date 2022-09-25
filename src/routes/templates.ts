@@ -136,9 +136,14 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
         let expression = conMatch.at(1) as string;
         let content = conMatch.at(2) as string;
 
-        let value = function(str: string) {
-            return eval(str);
-        }.call(inserts, expression);
+        let value
+        try {
+            value = function(str: string) {
+                return eval(str);
+            }.call(inserts, expression);
+        } catch(e) {
+            value = false;
+        }
 
         let before = source.substring(0, start);
         let after = source.substring(conRegex.lastIndex);

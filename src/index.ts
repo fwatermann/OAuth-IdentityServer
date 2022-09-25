@@ -48,7 +48,14 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 app.use(async (req, res, next) => {
     if (req.cookies[config.session.cookie.name]) {
-        (req as any).session = await OAuthDB.Session.get(req.cookies[config.session.cookie.name]);
+        let session = await OAuthDB.Session.get(req.cookies[config.session.cookie.name]);
+        (req as any).session = session;
+        if(!session) {
+            next();
+            return;
+        }
+        (req as any).user = await OAuthDB.User.get(session.sessionUser);
+        console.log((req as any).user)
     }
     next();
 });
