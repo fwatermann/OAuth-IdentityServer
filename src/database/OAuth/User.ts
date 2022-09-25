@@ -9,6 +9,7 @@ export type OAuthUser = {
     email: string,
     mfa: boolean,
     mfa_secret?: string,
+    permissions: any,
     created: number,
     updated: number
 }
@@ -31,6 +32,7 @@ export async function get(userId: string) : Promise<OAuthUser|null> {
     if(response.rows.length === 0) {
         return null;
     }
+
     return {
         userId: response.rows[0].userId,
         username: response.rows[0].username,
@@ -39,6 +41,7 @@ export async function get(userId: string) : Promise<OAuthUser|null> {
         email: response.rows[0].email,
         mfa: response.rows[0].mfa == 1,
         mfa_secret: response.rows[0].mfa_secret,
+        permissions: JSON.parse(response.rows[0].permissions),
         created: response.rows[0].created,
         updated: response.rows[0].updated
     }

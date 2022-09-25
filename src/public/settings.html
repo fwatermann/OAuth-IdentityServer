@@ -1,0 +1,111 @@
+((DNI:
+
+Platzhalter:
+- serviceName: string
+- profileAvatar: string
+- profileDisplayname: string
+- serviceVersion: string
+- copyrightYear: string
+- isAdmin: boolean
+- isSupport: boolean
+
+:DNI))
+
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>{{serviceName}} | Account</title>
+        <link rel="icon" href="{{serviceIcon}}"/>
+        <link rel="stylesheet" href="/assets/css/settings.css">
+        <link rel="stylesheet" href="https://cdn.w-mi.de/icons/fontawesome/css/all.min.css">
+        <script src="https://cdn.w-mi.de/jquery/jquery_v3.6.0/jquery.min.js"></script>
+        <script src="/assets/js/settings.js" type="module"></script>
+    </head>
+    <body>
+        <div class="menu">
+            <div class="menu-head">
+                <div class="page-title">
+                    <img draggable="false" src="{{serviceIcon}}" alt="Service Icon">
+                    <h1>{{serviceName}}</h1>
+                </div>
+                <div class="profile-info">
+                    <img draggable="false" src="{{profileAvatar}}" alt="Profile picture">
+                    <span>Test Account #1</span>
+                </div>
+            </div>
+            <div class="menu-body">
+                <ul>
+                    <li>
+                        <i class="fas fa-tag fa-fw"></i>
+                        <a linkType="menu_1" menu="user/profile">Profile</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-search fa-fw"></i>
+                        <a linkType="menu_1" menu="user/details">Details</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-shield-alt fa-fw"></i>
+                        <a linkType="menu_1" menu="user/security">Security</a>
+                    </li>
+{{?!(this.isAdmin || this.isSupport)}}
+                    <li>
+                        <i class="fas fa-unlock-alt fa-fw"></i>
+                        <a linkType="menu_1" menu="user/access">Access</a>
+                    </li>
+{{/?}}
+
+                </ul>
+{{?this.permissions.dashboard.support}}
+                <span class="menu-spacer">Support</span>
+                <ul>
+                    <li>
+                        <i class="fas fa-users fa-fw"></i>
+                        <a linkType="menu_1" menu="support/users">Manage users</a>
+                    </li>
+                </ul>
+{{/?}}
+
+{{?this.isAdmin}}
+                <span class="menu-spacer">Administration</span>
+                <ul>
+                    <li>
+                        <i class="fas fa-users fa-fw"></i>
+                        <a linkType="menu_1" menu="admin/users">Manage users</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-server fa-fw"></i>
+                        <a linkType="menu_1" menu="admin/clients">Manage OAuth2-Clients</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-cog fa-fw"></i>
+                        <a linkType="menu_1" menu="admin/settings">Global Settings</a>
+                    </li>
+                </ul>
+{{/?}}
+            </div>
+            <div class="menu-footer">
+                <span>Version {{serviceVersion}}</span>
+                <span>&copy; {{copyrightYear}} {{serviceName}}</span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="container-head">
+                <div class="navbar-left">
+
+                </div>
+                <div class="navbar-right">
+                    <a href="/logout" class="btn danger round"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+            <div class="container-body">
+            </div>
+            <div class="container-footer">
+
+            </div>
+        </div>
+    </body>
+</html>

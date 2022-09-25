@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS OAuth__User(
     email varchar(320) not null unique,
     mfa tinyint(1) default 0,
     mfa_secret varchar(32),
+    permissions text,
     created timestamp default current_timestamp,
     updated timestamp default current_timestamp on update current_timestamp
 );
