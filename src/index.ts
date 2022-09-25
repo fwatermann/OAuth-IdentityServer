@@ -6,11 +6,11 @@ import routerAccount from "./routes/settings";
 import path from "path";
 import cookieParser from "cookie-parser";
 import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./errors";
-import * as OAuthDB from "./database/OAuthDB";
 import config from "./config/config.json";
 import morgan from "morgan";
 import helmet from "helmet";
-const node2fa = require("node-2fa");
+import * as Database from "./database/Database";
+import * as OAuth from "./database/OAuthDB";
 
 const app = express();
 
@@ -45,17 +45,23 @@ app.use(express.urlencoded({
     extended: true,
     type: "application/x-www-form-urlencoded"
 }));
-app.use(cookieParser());
+app.use(cookieParser(config.secret.session_secret, {
+    decode(val: string): string {
+        return Buffer.from(val, "base64").toString("utf8");
+    }
+}));
 app.use(async (req, res, next) => {
-    if (req.cookies[config.session.cookie.name]) {
-        let session = await OAuthDB.Session.get(req.cookies[config.session.cookie.name]);
-        (req as any).session = session;
-        if(!session) {
+    if(req.signedCookies[config.session.cookie.name]) {
+        try {
+            req.session = JSON.parse(req.signedCookies[config.session.cookie.name]);
+            if(req.session) {
+                req.user = await OAuth.User.get(req.session.sessionUser);
+            }
+        } catch(e) {
+            console.error("Error while parsing session cookie: ", e);
             next();
             return;
         }
-        (req as any).user = await OAuthDB.User.get(session.sessionUser);
-        console.log((req as any).user)
     }
     next();
 });
@@ -65,8 +71,6 @@ app.use("/assets/", express.static(path.join(__dirname, "public", "assets"), {
     index: "index.html",
     redirect: true
 }));
-
-console.log(path.join(__dirname, "public", "assets"));
 
 app.use("/login", routerLogin);
 app.use("/logout", routerLogout);
@@ -82,6 +86,6 @@ app.use(errorHandler);
 app.use((req, res, next) => res.status(404).json(NOT_FOUND("Page/Endpoint not found.", "The requested url does not exist.")))
 
 app.listen(config.server.port, () => {
-    OAuthDB.setup();
+    Database.init();
     console.log("Listening...");
 });

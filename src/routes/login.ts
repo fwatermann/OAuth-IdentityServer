@@ -5,6 +5,8 @@ import * as Errors from "../errors";
 import {OAuthUser} from "../database/OAuth/User";
 import config from "../config/config.json";
 import {METHOD_NOT_ALLOWED} from "../errors";
+import {Session} from "../types/Session";
+import crypto from "crypto";
 const node2fa = require("node-2fa");
 
 const router = express.Router();
@@ -63,10 +65,20 @@ router.post("/", async (req, res, next) => {
         }
 
 
-        let sessionId = await OAuthDB.Session.generate(user.userId);
-        res.cookie(config.session.cookie.name, sessionId, {
+        let session : Session = {
+            sessionId: crypto.randomUUID(),
+            sessionData: {},
+            sessionExpires: Date.now() + 1000 * 60 * 60 * 24 * 7, //7 Days
+            sessionUser: user.userId
+        }
+        res.cookie(config.session.cookie.name, JSON.stringify(session), {
+            signed: true,
+            httpOnly: true,
             path: "/",
-            httpOnly: true
+            sameSite: "lax",
+            encode: (val): string => {
+                return Buffer.from(val, "utf8").toString("base64");
+            }
         });
 
         res.status(200).json({
@@ -83,3 +95,5 @@ router.post("/", async (req, res, next) => {
 router.all("/", (req, res, next) => {
     res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
 });
+
+

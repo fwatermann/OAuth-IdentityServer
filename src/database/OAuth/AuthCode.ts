@@ -1,5 +1,6 @@
 import * as db from "../Database";
 import * as crypto from "crypto";
+import OAuth__AuthCode from "../models/OAuth.AuthCode.model";
 
 export type OAuthCode = {
     authCodeId: string,
@@ -18,19 +19,18 @@ export async function create(scope: string[], redirectURI: string, clientId: str
     let authCode = crypto.randomBytes(16).toString("hex");
     let scopes = scope.join(";");
 
-    let response = await db.update("INSERT INTO OAuth__AuthCodes (authCodeId, authCode, authCodeRedirectURI, authCodeScope, authCodeClient, authCodeUser) VALUES (?, ?, ?, ?, ?, ?)", [authCodeId, authCode, redirectURI, scopes, clientId, userId]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    return {
-        authCodeId: authCodeId,
+    let response = await OAuth__AuthCode.create({
         authCode: authCode,
-        redirectURI: redirectURI,
-        expires: 0,
-        scopes: scope,
-        clientId: clientId,
-        userId: userId
-    };
+        authCodeScope: scopes,
+        authCodeClient: clientId,
+        authCodeUser: userId,
+        authCodeRedirectURI: redirectURI
+    });
+
+    console.log("Response: ", response);
+
+    return null;
+
 }
 
 export async function get(authCode: string) : Promise<OAuthCode|null> {

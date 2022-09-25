@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import * as db from "../Database";
+import OAuth__User from "../models/OAuth.User.model";
 
 export type OAuthUser = {
     userId: string,
@@ -17,45 +18,24 @@ export type OAuthUser = {
 export async function create(username: string, displayName: string, password: string, email: string): Promise<string> {
     let passwordHash = hashPassword(username, password);
     let userId = crypto.randomUUID();
-    let response = await db.update("INSERT INTO OAuth__User (userId, username, displayName, password, email) VALUES (?, ?, ?, ?, ?)", [userId, username, displayName, passwordHash, email]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    return userId;
+    let response = await OAuth__User.create({
+        userId: userId,
+        username: username,
+        displayName: displayName,
+        password: passwordHash,
+        email: email
+    });
+    return response.userId;
 }
 
 export async function get(userId: string) : Promise<OAuthUser|null> {
-    let response = await db.query("SELECT * FROM OAuth__User WHERE userId = ? OR username = ?", [userId, userId]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    if(response.rows.length === 0) {
-        return null;
-    }
-
-    return {
-        userId: response.rows[0].userId,
-        username: response.rows[0].username,
-        displayName: response.rows[0].displayName,
-        passwordHash: response.rows[0].password,
-        email: response.rows[0].email,
-        mfa: response.rows[0].mfa == 1,
-        mfa_secret: response.rows[0].mfa_secret,
-        permissions: JSON.parse(response.rows[0].permissions),
-        created: response.rows[0].created,
-        updated: response.rows[0].updated
-    }
+    let response = await OAuth__User.findByPk(userId);
+    return response;
 }
 
 export async function checkPassword(username: string, password: string): Promise<boolean> {
     let passwordHash = hashPassword(username, password);
-    let response = await db.query("SELECT password FROM OAuth__User WHERE username = ?", [username]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    } else {
-        if(response.rows.length === 0) return false;
-        return response.rows[0].password === passwordHash;
-    }
+
 }
 
 export async function update2FA(userId: string, enabled: boolean, secret?: string) {
