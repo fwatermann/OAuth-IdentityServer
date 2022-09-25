@@ -1,5 +1,5 @@
 
-function initAccount() {
+function initSettings() {
     let menuEntries = $("[linkType=menu_1]");
     menuEntries.attr("href", "#");
     menuEntries.on("click", (event) => {
@@ -8,8 +8,8 @@ function initAccount() {
         let page = target.attr("menu");
         $(".menu-body .active").removeClass("active");
         target.parent().addClass("active");
-        $(".container-body").load(`/account/page/${page}`);
+        $(".container-body").load(`/settings/page/${page}`);
     });
 }
 
-initAccount();
+initSettings();

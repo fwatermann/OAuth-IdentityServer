@@ -41,47 +41,51 @@ Platzhalter:
                 <ul>
                     <li>
                         <i class="fas fa-tag fa-fw"></i>
-                        <a linkType="menu_1" menu="profile">Profile</a>
+                        <a linkType="menu_1" menu="user/profile">Profile</a>
                     </li>
                     <li>
                         <i class="fas fa-search fa-fw"></i>
-                        <a linkType="menu_1" menu="details">Details</a>
+                        <a linkType="menu_1" menu="user/details">Details</a>
                     </li>
                     <li>
                         <i class="fas fa-shield-alt fa-fw"></i>
-                        <a linkType="menu_1" menu="security">Security</a>
+                        <a linkType="menu_1" menu="user/security">Security</a>
                     </li>
+{{?!(this.isAdmin || this.isSupport)}}
                     <li>
                         <i class="fas fa-unlock-alt fa-fw"></i>
-                        <a linkType="menu_1" menu="access">Access</a>
+                        <a linkType="menu_1" menu="user/access">Access</a>
                     </li>
+{{/?}}
+
                 </ul>
-{{?isSupport}}
+{{?this.isSupport}}
                 <span class="menu-spacer">Support</span>
                 <ul>
                     <li>
                         <i class="fas fa-users fa-fw"></i>
-                        <a linkType="menu_1" menu="support_users">Manage users</a>
+                        <a linkType="menu_1" menu="support/users">Manage users</a>
                     </li>
                 </ul>
-{{/isSupport}}
-{{?isAdmin}}
+{{/?}}
+
+{{?this.isAdmin}}
                 <span class="menu-spacer">Administration</span>
                 <ul>
                     <li>
                         <i class="fas fa-users fa-fw"></i>
-                        <a linkType="menu_1" menu="admin_users">Manage users</a>
+                        <a linkType="menu_1" menu="admin/users">Manage users</a>
                     </li>
                     <li>
                         <i class="fas fa-server fa-fw"></i>
-                        <a linkType="menu_1" menu="admin_clients">Manage OAuth2-Clients</a>
+                        <a linkType="menu_1" menu="admin/clients">Manage OAuth2-Clients</a>
                     </li>
                     <li>
                         <i class="fas fa-cog fa-fw"></i>
-                        <a linkType="menu_1" menu="admin_settings">Global Settings</a>
+                        <a linkType="menu_1" menu="admin/settings">Global Settings</a>
                     </li>
                 </ul>
-{{/isAdmin}}
+{{/?}}
             </div>
             <div class="menu-footer">
                 <span>Version {{serviceVersion}}</span>

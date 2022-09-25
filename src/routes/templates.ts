@@ -129,26 +129,26 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
         Find Conditions
      */
 
-    let conRegex = /{{\?(?<key>[a-zA-Z0-9_]+)}}(.*?){{\/\k<key>}}/gmsd;
+    let conRegex = /{{\?(.*?)}}(.*?){{\/\?}}/gmsd;
     let conMatch;
     while((conMatch = conRegex.exec(source))) {
         let start = conRegex.lastIndex - (conMatch.at(0)??"").length;
-        let key = (conMatch.at(1) as string).split(".");
+        let expression = conMatch.at(1) as string;
         let content = conMatch.at(2) as string;
 
-        let value = (inserts as any)[key[0]];
-        for(let i = 1; i < key.length; i ++) {
-            value = value[key[i]];
-        }
+        let value = function(str: string) {
+            return eval(str);
+        }.call(inserts, expression);
 
         let before = source.substring(0, start);
         let after = source.substring(conRegex.lastIndex);
         if(value) {
             source = before + content + after;
+            conRegex.lastIndex = start + content.length;
         } else {
             source = before + after;
+            conRegex.lastIndex = start;
         }
-        conRegex.lastIndex = start + content.length;
     }
 
 
