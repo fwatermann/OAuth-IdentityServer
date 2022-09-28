@@ -1,22 +1,21 @@
 import express from "express";
 import template from "./templates";
 import {UNAUTHORIZED} from "../errors";
-import {OAuthUser} from "../database/OAuth/User";
+import {OAuth__User} from "../database/Database";
 
 const router = express.Router();
 export default router;
 
 router.get("/", (req, res, next) => {
-    if(!(req as any).user) {
+    if(!req.user) {
         res.redirect(`/login?redirect_uri=${encodeURIComponent("/settings")}`);
         return;
     }
-    let user : OAuthUser = (req as any).user;
+    let user : OAuth__User = req.user;
     template("settings.html", {
         profileAvatar: "https://cdn.w-mi.de/shorturl/images/user.png",
-        profileDisplayname: "Test Account #1",
-        isSupport: false,
-        isAdmin: true,
+        profileDisplayname: user.displayName,
+        permissions: user.permissions.map<string>((pobj) => pobj.permission),
     }, req, res, next);
 });
 

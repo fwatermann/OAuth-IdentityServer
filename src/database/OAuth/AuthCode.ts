@@ -1,71 +1,96 @@
 import * as db from "../Database";
+import {
+    OAuth__AuthCode,
+    ASSOCIATION_OAuth__AuthCode_Scope,
+    ASSOCIATION_OAuth__AuthCode_Client,
+    ASSOCIATION_OAuth__AuthCode_User,
+    OAuth__ClientURI, OAuth__Scope, OAuth__AuthCodeScope, ASSOCIATION_OAuth__Client_URI, ASSOCIATION_OAuth__AuthCode_URI
+} from "../Database";
 import * as crypto from "crypto";
-import OAuth__AuthCode from "../models/OAuth.AuthCode.model";
+import sequelize, {Op} from "sequelize";
 
-export type OAuthCode = {
-    authCodeId: string,
-    authCode: string,
-    redirectURI: string,
-    expires: number,
-    scopes: string[],
-    clientId: string,
-    userId: string,
-    created?: number,
-    updated?: number
-}
-
-export async function create(scope: string[], redirectURI: string, clientId: string, userId: string): Promise<OAuthCode|null> {
-    let authCodeId = crypto.randomUUID();
+export async function create(scope: string[], redirectURI: string, clientId: string, userId: string): Promise<OAuth__AuthCode|null> {
     let authCode = crypto.randomBytes(16).toString("hex");
-    let scopes = scope.join(";");
+    let redirectURIId = (await OAuth__ClientURI.findOne({
+        where: {
+            clientId: clientId,
+            redirectURI: redirectURI
+        }
+    }))?.Id;
 
-    let response = await OAuth__AuthCode.create({
-        authCode: authCode,
-        authCodeScope: scopes,
-        authCodeClient: clientId,
-        authCodeUser: userId,
-        authCodeRedirectURI: redirectURI
+    let scopes = await OAuth__Scope.findAll({
+        where: {
+            scope: {
+                [Op.in]: scope
+            }
+        },
+        attributes: ["scopeId"]
     });
-
-    console.log("Response: ", response);
-
-    return null;
-
-}
-
-export async function get(authCode: string) : Promise<OAuthCode|null> {
-    let response = await db.query("SELECT * FROM OAuth__AuthCodes WHERE authCode = ?", [authCode]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    if(response.rows.length === 0) {
+    if(scopes.length != scope.length) {
         return null;
     }
-    return {
-        authCodeId: response.rows[0].authCodeId,
-        authCode: response.rows[0].authCode,
-        redirectURI: response.rows[0].authCodeRedirectURI,
-        expires: response.rows[0].authCodeExpires,
-        scopes: response.rows[0].authCodeScope.split(";"),
-        clientId: response.rows[0].authCodeClient,
-        userId: response.rows[0].authCodeUser,
-        created: response.rows[0].created,
-        updated: response.rows[0].updated
-    }
+
+    let authCodeObj = await OAuth__AuthCode.create({
+        authCode: authCode,
+        clientId: clientId,
+        userId: userId,
+        redirectURIId: redirectURIId
+    }, {
+        include: [
+            ASSOCIATION_OAuth__AuthCode_User,
+            ASSOCIATION_OAuth__AuthCode_Client,
+            ASSOCIATION_OAuth__AuthCode_URI
+        ]
+    });
+    if(!authCodeObj) return null;
+
+    await OAuth__AuthCodeScope.bulkCreate(
+        scopes.map<{authCodeId: string, scopeId: string}>((scope) => {
+            return { scopeId: scope.scopeId, authCodeId: authCodeObj.authCodeId};
+        })
+    );
+    return authCodeObj;
+}
+
+export async function get(authCode: string) : Promise<OAuth__AuthCode|null> {
+    return await OAuth__AuthCode.findOne({
+        where: {
+            authCode: authCode
+        },
+        include: [
+            {
+                association: ASSOCIATION_OAuth__AuthCode_Scope,
+                as: "authCodeScopes",
+                nested: true,
+                attributes: ["scope"]
+            },
+            {
+                association: ASSOCIATION_OAuth__AuthCode_URI,
+                as: "authCodeRedirectURI",
+                nested: true,
+                attributes: ["redirectURI"]
+            }
+        ]
+    });
 }
 
 export async function deleteAuthCode(authCode: string) : Promise<boolean> {
-    let response = await db.update("DELETE FROM OAuth__AuthCodes WHERE authCode = ?", [authCode]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    return true;
+    let response = await OAuth__AuthCode.destroy({
+        where: {
+            authCode: authCode
+        }
+    });
+    return response > 0;
 }
 
 export async function cleanupExpired() : Promise<boolean> {
-    let response = await db.update("DELETE FROM OAuth__AuthCodes WHERE authCodeExpires < CURRENT_TIMESTAMP", []);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
+    await OAuth__AuthCode.destroy({
+        where: {
+            authCodeExpires: {
+                [Op.lt]: sequelize.literal("CURRENT_TIMESTAMP")
+            }
+        }
+    });
+
     return true;
 }

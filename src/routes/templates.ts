@@ -4,6 +4,7 @@ import express from "express";
 import {OAuthTokenScopeInfo} from "../database/OAuth/Token";
 import config from "../config/config.json";
 import crypto from "crypto";
+import {OAuth__Scope} from "../database/Database";
 
 export type FilledPage = {
     name: string,
@@ -28,7 +29,7 @@ export type Placeholders<T extends Templates> =
             clientActiveSince: string
             userDisplayName: string,
             userIconURL: string,
-            scopesDescriptions: (OAuthTokenScopeInfo|undefined)[],
+            scopesDescriptions: (OAuth__Scope|undefined)[],
             jokeScopes: string[],
 
             csrf: string,
@@ -42,8 +43,7 @@ export type Placeholders<T extends Templates> =
         ? {
             profileAvatar: string,
             profileDisplayname: string,
-            isSupport: boolean,
-            isAdmin: boolean,
+            permissions: string[]
         } :
     T extends "settings/profile.html"
         ? {
@@ -99,6 +99,7 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
             let inner = "";
             for (let i = 0; i < array.length; i++) {
                 let insert: any = array[i];
+                if(!insert) continue;
 
                 let round = loop;
                 let thiz = loop.matchAll(regexLoopThis);
@@ -187,11 +188,15 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
 }
 
 export default function template<T extends Templates>(file: T, ins: Placeholders<T>, req : express.Request, res: express.Response, next: express.NextFunction): void {
-    let page = templateSource(file, ins);
-    let cspHeader = res.getHeader("Content-Security-Policy") as string;
-    for(let nonce of page.nonce) {
-        cspHeader += ` '${nonce}'`;
+    try {
+        let page = templateSource(file, ins);
+        let cspHeader = res.getHeader("Content-Security-Policy") as string;
+        for(let nonce of page.nonce) {
+            cspHeader += ` '${nonce}'`;
+        }
+        res.setHeader("Content-Security-Policy", cspHeader);
+        res.send(page.source);
+    } catch(e) {
+        next(e);
     }
-    res.setHeader("Content-Security-Policy", cspHeader);
-    res.send(page.source);
 }

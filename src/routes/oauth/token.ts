@@ -1,8 +1,8 @@
 import express from "express";
 import {BAD_REQUEST, METHOD_NOT_ALLOWED, NOT_FOUND, UNAUTHORIZED} from "../../errors";
 import * as OAuth from "../../database/OAuthDB";
-import {OAuthClient} from "../../database/OAuth/Client";
 import config from "../../config/config.json";
+import {OAuth__Client} from "../../database/Database";
 
 const router = express.Router();
 export default router;
@@ -22,15 +22,16 @@ router.get("/validate", async(req, res, next) => {
         }
         let oauthToken = await OAuth.Token.get(token);
         console.log(`Token: "${token}"`);
-        if(!oauthToken || oauthToken.expires < Date.now()) {
+        if(!oauthToken || oauthToken.tokenExpires.getTime() < Date.now()) {
             res.status(401).json(UNAUTHORIZED("Invalid token", "The token provided in authorization header is invalid."));
             return;
         }
         res.status(200).json({
             client_id: oauthToken.clientId,
-            scopes: oauthToken.scope,
+            scopes: oauthToken.tokenScopes,
             userId: oauthToken.userId,
-            expires_at: oauthToken.expires
+            expires_at: oauthToken.tokenExpires.toISOString(),
+            expires_in: Math.round((oauthToken.tokenExpires.getTime() - Date.now()) / 1000)
         });
     } else {
         res.status(400).json(BAD_REQUEST("Bad request", "Token must be provided in authorization header!"));
@@ -92,7 +93,7 @@ router.all("/validate", (req, res, next) => {
     res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET"]));
 });
 
-async function handleAuthCodeRequest(req: express.Request, res: express.Response, next: express.NextFunction, client: OAuthClient) {
+async function handleAuthCodeRequest(req: express.Request, res: express.Response, next: express.NextFunction, client: OAuth__Client) {
 
     try {
 
@@ -100,6 +101,8 @@ async function handleAuthCodeRequest(req: express.Request, res: express.Response
         let redirect_uri = req.body.redirect_uri;
 
         let authCode = await OAuth.AuthCode.get(code);
+        console.log(authCode.toJSON());
+        console.log("redirectURI: " + redirect_uri);
         if (!authCode) {
             res.status(400).json(BAD_REQUEST("Invalid authorization code.", "The authorization code is invalid."));
             return;
@@ -109,13 +112,13 @@ async function handleAuthCodeRequest(req: express.Request, res: express.Response
             res.status(401).json(UNAUTHORIZED("Client mismatch", "The provided authorization code was issued to a different client."))
         }
 
-        if (authCode.redirectURI != redirect_uri) {
+        if (authCode.redirectURI?.redirectURI != redirect_uri) {
             res.status(400).json(BAD_REQUEST("Invalid redirect uri.", "The provided redirect uri does not match the provided authorization code."));
             return;
         }
 
-        let token = await OAuth.Token.create("userAccess", authCode.scopes, client.clientId, authCode.userId);
-        let refreshToken = await OAuth.Token.create("userRefresh", authCode.scopes, client.clientId, authCode.userId);
+        let token = await OAuth.Token.create("userAccess", authCode.authCodeScopes.map<string>((obj) => obj.scope), client.clientId, authCode.userId);
+        let refreshToken = await OAuth.Token.create("userRefresh", authCode.authCodeScopes.map<string>((obj) => obj.scope), client.clientId, authCode.userId);
 
         if (!token || !refreshToken) {
             if (token) await OAuth.Token.deleteToken(token.token);
@@ -126,12 +129,14 @@ async function handleAuthCodeRequest(req: express.Request, res: express.Response
 
         await OAuth.AuthCode.deleteAuthCode(code);
 
+        console.log(token);
+
         res.status(200).json({
             access_token: token.token,
             token_type: "Bearer",
-            expires_in: token.expires,
+            expires_in: 4*60*60,
             refresh_token: refreshToken.token,
-            scope: token.scope
+            scope: authCode.authCodeScopes.map<string>((obj) => obj.scope)
         });
 
     } catch(e) {
@@ -140,7 +145,7 @@ async function handleAuthCodeRequest(req: express.Request, res: express.Response
 
 }
 
-async function handleRefreshTokenRequest(req: express.Request, res: express.Response, next: express.NextFunction, client: OAuthClient) {
+async function handleRefreshTokenRequest(req: express.Request, res: express.Response, next: express.NextFunction, client: OAuth__Client) {
 
     let refreshTokenStr = req.body.refresh_token;
 
@@ -168,8 +173,8 @@ async function handleRefreshTokenRequest(req: express.Request, res: express.Resp
 
     /* Token OK */
 
-    let token = await OAuth.Token.create("userAccess", oauth_token.scope, client.clientId, oauth_token.userId, oauth_token.tokenId);
-    let refreshToken = await OAuth.Token.create("userRefresh", oauth_token.scope, client.clientId, oauth_token.userId);
+    let token = await OAuth.Token.create("userAccess", oauth_token.tokenScopes.map<string>((obj) => obj.scope), client.clientId, oauth_token.userId, oauth_token.tokenId);
+    let refreshToken = await OAuth.Token.create("userRefresh", oauth_token.tokenScopes.map<string>((obj) => obj.scope), client.clientId, oauth_token.userId);
 
     if (!token || !refreshToken) {
         if (token) await OAuth.Token.deleteToken(token.token);
@@ -181,9 +186,9 @@ async function handleRefreshTokenRequest(req: express.Request, res: express.Resp
     res.status(200).json({
         access_token: token.token,
         token_type: "Bearer",
-        expires_in: token.expires,
+        expires_in: Math.round((token.tokenExpires.getTime() - Date.now()) / 1000),
         refresh_token: refreshToken.token,
-        scope: token.scope
+        scope: token.tokenScopes.map<string>((obj) => obj.scope)
     });
 
 

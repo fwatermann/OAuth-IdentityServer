@@ -2,7 +2,6 @@ import express from "express";
 import template from "./templates";
 import * as OAuthDB from "../database/OAuthDB";
 import * as Errors from "../errors";
-import {OAuthUser} from "../database/OAuth/User";
 import config from "../config/config.json";
 import {METHOD_NOT_ALLOWED} from "../errors";
 import {Session} from "../types/Session";
@@ -13,7 +12,7 @@ const router = express.Router();
 export default router;
 
 router.get("/", async (req, res, next) => {
-    if((req as any).session) {
+    if(req.session && req.user) {
         res.redirect((req.query.redirect_uri as string)??config.ui.login_redirect);
         return;
     }
@@ -33,12 +32,12 @@ router.post("/", async (req, res, next) => {
         let username = req.body.username as string;
         let password = req.body.password as string;
 
-        let user : OAuthUser|null = await OAuthDB.User.get(username);
+        let user = await OAuthDB.User.getByUsername(username);
         if(user === null) {
             res.status(401).send(Errors.UNAUTHORIZED("Invalid username or password.", "The username or password provided is incorrect."));
             return;
         }
-        let checkPassword = OAuthDB.User.hashPassword(username, password) === user.passwordHash;
+        let checkPassword = OAuthDB.User.hashPassword(username, password) === user.password;
         if(!checkPassword) {
             res.status(401).send(Errors.UNAUTHORIZED("Invalid username or password.", "The username or password provided is incorrect."));
             return;
