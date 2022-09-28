@@ -34,7 +34,7 @@ Platzhalter:
                 </div>
                 <div class="profile-info">
                     <img draggable="false" src="{{profileAvatar}}" alt="Profile picture">
-                    <span>Test Account #1</span>
+                    <span>{{profileDisplayname}}</span>
                 </div>
             </div>
             <div class="menu-body">
@@ -51,25 +51,13 @@ Platzhalter:
                         <i class="fas fa-shield-alt fa-fw"></i>
                         <a linkType="menu_1" menu="user/security">Security</a>
                     </li>
-{{?!(this.isAdmin || this.isSupport)}}
                     <li>
                         <i class="fas fa-unlock-alt fa-fw"></i>
                         <a linkType="menu_1" menu="user/access">Access</a>
                     </li>
-{{/?}}
-
                 </ul>
-{{?this.permissions.dashboard.support}}
-                <span class="menu-spacer">Support</span>
-                <ul>
-                    <li>
-                        <i class="fas fa-users fa-fw"></i>
-                        <a linkType="menu_1" menu="support/users">Manage users</a>
-                    </li>
-                </ul>
-{{/?}}
 
-{{?this.isAdmin}}
+{{?this.permissions.indexOf("service:administrator") >= 0}}
                 <span class="menu-spacer">Administration</span>
                 <ul>
                     <li>

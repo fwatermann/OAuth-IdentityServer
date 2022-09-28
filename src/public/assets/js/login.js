@@ -54,6 +54,7 @@ function postLogin(success, redirectURI, message) {
         window.location.href = redirectURI;
     } else {
         $("span.error_message").text(message);
+        $(".card-overlay").addClass("d-none");
     }
 }
 

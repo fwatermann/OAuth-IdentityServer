@@ -13,8 +13,8 @@
   },
   "secret": {
     "csrf_token": "<must be 32 chars long string>",
-    "csrf_secret": "<random >32 chars long string>",
-    "session_secret": "<random >32 chars long string>"
+    "csrf_secret": "<random> 32 chars long string>",
+    "session_secret": "<random> 32 chars long string>"
   },
   "security": {
     "allowedResourceOrigins": [

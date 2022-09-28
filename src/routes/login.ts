@@ -2,16 +2,17 @@ import express from "express";
 import template from "./templates";
 import * as OAuthDB from "../database/OAuthDB";
 import * as Errors from "../errors";
-import {OAuthUser} from "../database/OAuth/User";
 import config from "../config/config.json";
 import {METHOD_NOT_ALLOWED} from "../errors";
+import {Session} from "../types/Session";
+import crypto from "crypto";
 const node2fa = require("node-2fa");
 
 const router = express.Router();
 export default router;
 
 router.get("/", async (req, res, next) => {
-    if((req as any).session) {
+    if(req.session && req.user) {
         res.redirect((req.query.redirect_uri as string)??config.ui.login_redirect);
         return;
     }
@@ -31,12 +32,12 @@ router.post("/", async (req, res, next) => {
         let username = req.body.username as string;
         let password = req.body.password as string;
 
-        let user : OAuthUser|null = await OAuthDB.User.get(username);
+        let user = await OAuthDB.User.getByUsername(username);
         if(user === null) {
             res.status(401).send(Errors.UNAUTHORIZED("Invalid username or password.", "The username or password provided is incorrect."));
             return;
         }
-        let checkPassword = OAuthDB.User.hashPassword(username, password) === user.passwordHash;
+        let checkPassword = OAuthDB.User.hashPassword(username, password) === user.password;
         if(!checkPassword) {
             res.status(401).send(Errors.UNAUTHORIZED("Invalid username or password.", "The username or password provided is incorrect."));
             return;
@@ -63,10 +64,20 @@ router.post("/", async (req, res, next) => {
         }
 
 
-        let sessionId = await OAuthDB.Session.generate(user.userId);
-        res.cookie(config.session.cookie.name, sessionId, {
+        let session : Session = {
+            sessionId: crypto.randomUUID(),
+            sessionData: {},
+            sessionExpires: Date.now() + 1000 * 60 * 60 * 24 * 7, //7 Days
+            sessionUser: user.userId
+        }
+        res.cookie(config.session.cookie.name, JSON.stringify(session), {
+            signed: true,
+            httpOnly: true,
             path: "/",
-            httpOnly: true
+            sameSite: "lax",
+            encode: (val): string => {
+                return Buffer.from(val, "utf8").toString("base64");
+            }
         });
 
         res.status(200).json({
@@ -83,3 +94,5 @@ router.post("/", async (req, res, next) => {
 router.all("/", (req, res, next) => {
     res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
 });
+
+

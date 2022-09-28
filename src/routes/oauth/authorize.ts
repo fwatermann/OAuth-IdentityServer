@@ -6,6 +6,7 @@ import * as OAuth from "../../database/OAuthDB";
 import {BAD_REQUEST, INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED, UNAUTHORIZED} from "../../errors";
 import {OAuthTokenScopeInfo} from "../../database/OAuth/Token";
 import {Encoding} from "crypto";
+import {OAuth__Scope} from "../../database/Database";
 
 const router = express.Router();
 export default router;
@@ -77,10 +78,10 @@ router.get("/", async (req, res, next) => {
     }
 
     let scopes = (scope as string).split(" ");
-    let scopesDescriptions : (OAuthTokenScopeInfo|undefined)[] = [];
+    let scopesDescriptions : (OAuth__Scope|null)[] = [];
     for(let i = 0; i < scopes.length; i++) {
         let scope = scopes[i];
-        let scopeInfo = OAuth.Token.getScopeInfo(scope);
+        let scopeInfo = (await OAuth.Token.getScopeInfo(scope))?.toJSON() as OAuth__Scope;
         if(scopeInfo) scopesDescriptions.push(scopeInfo);
         else scopesDescriptions.push(undefined);
     }
@@ -90,7 +91,7 @@ router.get("/", async (req, res, next) => {
     template("authorize.html", {
         clientName: client.clientName,
         clientIconURL: "https://cdn.w-mi.de/shorturl/images/program.png",
-        clientActiveSince: new Date(client.created).toDateString(),
+        clientActiveSince: new Date(client.createdAt).toDateString(),
         userDisplayName: user.displayName,
         userIconURL: "https://cdn.w-mi.de/shorturl/images/user.png",
         scopesDescriptions: scopesDescriptions,
@@ -112,7 +113,7 @@ router.post("/", async (req, res) => {
         return;
     }
 
-    if(!(req as any).session) {
+    if(!req.user) {
         res.redirect("/login?redirect_uri=" + encodeURIComponent(req.originalUrl));
         return;
     }
@@ -137,16 +138,12 @@ router.post("/", async (req, res) => {
     }
 
     let client = await OAuth.Client.get(client_id as string);
-    if(client == null) {
+    if(!client) {
         res.status(400).json(BAD_REQUEST("Invalid Request", "Provided client_id is invalid."));
         return;
     }
 
-    let user = await OAuth.User.get((req as any).session.sessionUser);
-    if(user == null) {
-        res.status(401).json(UNAUTHORIZED("Invalid User Id", "The user id provided in the session is invalid."));
-        return;
-    }
+    let user = req.user;
 
     if(!(await OAuth.Client.checkRedirectURI(client.clientId, redirect_uri as string))) {
         res.status(400).json(BAD_REQUEST("Invalid Request", "Provided redirect_uri is not a registered redirect uri."));
@@ -229,15 +226,13 @@ function checkCSRFToken(token: string) : boolean {
 }
 
 async function answerWithToken(res: express.Response, scopes: string|string[], redirectURI: string, clientId: string, userId: string, state?: string) {
-
     let scope : string = Array.isArray(scopes) ? scopes.join(";") : scopes;
-
     let token = await OAuth.Token.create("userAccess", (scope as string).split(" "), clientId, userId);
     if (token == null) {
         res.status(500).json(INTERNAL_SERVER_ERROR("Internal Server Error", "Failed to create access token."));
         return;
     }
-    res.redirect(redirectURI as string + "#access_token=" + token.token + "&token_type=bearer&expires_in=" + token.expires + (state ? "&state=" + encodeURIComponent(state as string) : ""));
+    res.redirect(redirectURI as string + "#access_token=" + token.token + "&token_type=bearer&expires_in=14400" + (state ? "&state=" + encodeURIComponent(state as string) : ""));
     return;
 
 }
