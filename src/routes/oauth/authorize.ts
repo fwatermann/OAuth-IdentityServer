@@ -3,8 +3,6 @@ import crypto from "crypto";
 import template from "../templates";
 import config from "../../config/config.json";
 import * as OAuth from "../../database/OAuthDB";
-import {BAD_REQUEST, INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED, UNAUTHORIZED} from "../../errors";
-import {OAuthTokenScopeInfo} from "../../database/OAuth/Token";
 import {Encoding} from "crypto";
 import {OAuth__Scope} from "../../database/Database";
 
@@ -26,40 +24,40 @@ router.get("/", async (req, res, next) => {
     let force_verify = req.query.force_verify;
 
     if(!client_id || !redirect_uri || !response_type || !scope) {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Missing parameters in authorization request.", {
+        res.error("BAD_REQUEST", "Missing parameters in authorization request.", {
             client_id: client_id??false,
             redirect_uri: redirect_uri??false,
             response_type: response_type??false,
             scope: scope??false,
             state: state??false,
             force_verify: force_verify??false,
-        }));
+        });
         return;
     }
 
     if(response_type != "code" && response_type != "token") {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Invalid response type."));
+        res.error("BAD_REQUEST", "Invalid response type.");
         return;
     }
     if(!scope || (scope as string) == "") {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Invalid scope."));
+        res.error("BAD_REQUEST", "Invalid scope.");
         return;
     }
 
     let client = await OAuth.Client.get(client_id as string);
     if(client == null) {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Provided client_id is invalid."));
+        res.error("BAD_REQUEST", "Provided client_id is invalid.");
         return;
     }
     let user = await OAuth.User.get((req as any).session.sessionUser);
     if(user == null) {
-        res.status(401).json(UNAUTHORIZED("Invalid User Id", "The user id provided in the session is invalid."));
+        res.error("UNAUTHORIZED", "Not logged in.");
         return;
     }
 
     if(client.trusted) {
         if(!(await OAuth.Client.checkRedirectURI(client.clientId, redirect_uri as string))) {
-            res.status(400).json(BAD_REQUEST("Invalid Request", "Provided redirect_uri is not a registered redirect uri."));
+            res.error("BAD_REQUEST", "Set redirect_uri is not registered.");
             return;
         }
 
@@ -70,7 +68,7 @@ router.get("/", async (req, res, next) => {
             await answerWithToken(res, scope as string, redirect_uri as string, client.clientId, user.userId, state as string|undefined);
             return;
         } else {
-            res.status(400).json(BAD_REQUEST("Invalid Request", "Provided response type is invalid. Use either \"code\" for Authorization Code Flow or \"token\" for Implicit Grant Flow."));
+            res.error("BAD_REQUEST", "Provided response type is invalid. Use either \"code\" for Authorization Code Flow or \"token\" for Implicit Grant Flow.");
             return;
         }
 
@@ -109,7 +107,7 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res) => {
 
     if(req.headers["content-type"] != "application/x-www-form-urlencoded") {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Invalid Content-Type."));
+        res.error("UNSUPPORTED_MEDIA_TYPE", "Content-Type of request must be \"application/x-www-form-urlencoded\".");
         return;
     }
 
@@ -127,31 +125,31 @@ router.post("/", async (req, res) => {
     let state = req.body.state;
 
     if(!client_id || !redirect_uri || !response_type || !scope) {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Missing parameters in authorization request.", {
+        res.error("BAD_REQUEST", "Missing parameters in authorization request.", {
             client_id: client_id??false,
             redirect_uri: redirect_uri??false,
             response_type: response_type??false,
             scope: scope??false,
             state: state??false,
-        }));
+        })
         return;
     }
 
     let client = await OAuth.Client.get(client_id as string);
     if(!client) {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Provided client_id is invalid."));
+        res.error("BAD_REQUEST", "Provided client_id is invalid.");
         return;
     }
 
     let user = req.user;
 
     if(!(await OAuth.Client.checkRedirectURI(client.clientId, redirect_uri as string))) {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Provided redirect_uri is not a registered redirect uri."));
+        res.error("BAD_REQUEST", "Set redirect_uri is not a registered redirect uri.");
         return;
     }
 
     if(!checkCSRFToken(csrf)) {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Invalid CSRF Token."));
+        res.error("BAD_REQUEST", "Invalid CSRF-Token.");
         return;
     }
 
@@ -167,13 +165,14 @@ router.post("/", async (req, res) => {
         await answerWithToken(res, scope as string, redirect_uri as string, client.clientId, user.userId, state as string|undefined);
         return;
     } else {
-        res.status(400).json(BAD_REQUEST("Invalid Request", "Provided response type is invalid. Use either \"code\" for Authorization Code Flow or \"token\" for Implicit Grant Flow."));
+        res.error("BAD_REQUEST", "Provided response type is invalid. Use either \"code\" for Authorization Code Flow or \"token\" for Implicit Grant Flow.")
         return;
     }
 });
 
 router.all("/", (req, res, next) => {
-    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
+    res.error("METHOD_NOT_ALLOWED", `This endpoint does not support "${req.method}"`);
+    return;
 });
 
 function generateCSRFToken() : string {
@@ -229,7 +228,7 @@ async function answerWithToken(res: express.Response, scopes: string|string[], r
     let scope : string = Array.isArray(scopes) ? scopes.join(";") : scopes;
     let token = await OAuth.Token.create("userAccess", (scope as string).split(" "), clientId, userId);
     if (token == null) {
-        res.status(500).json(INTERNAL_SERVER_ERROR("Internal Server Error", "Failed to create access token."));
+        res.error("INTERNAL_SERVER_ERROR", "Failed to create access token.");
         return;
     }
     res.redirect(redirectURI as string + "#access_token=" + token.token + "&token_type=bearer&expires_in=14400" + (state ? "&state=" + encodeURIComponent(state as string) : ""));
@@ -242,7 +241,7 @@ async function answerWithAuthCode(res : express.Response, scopes: string|string[
 
     let code = await OAuth.AuthCode.create(scope.split(" "), redirect_uri, clientId, userId);
     if(code == null) {
-        res.status(500).json(INTERNAL_SERVER_ERROR("Internal Server Error", "Failed to create authorization code."));
+        res.error("INTERNAL_SERVER_ERROR", "Failed to create authorization code.")
         return;
     }
     res.redirect(redirect_uri as string + "?code=" + code.authCode + (state ? "&state=" + encodeURIComponent(state as string) : ""));

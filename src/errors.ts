@@ -1,70 +1,62 @@
+import express from "express";
 
-export type API_ERROR = {
-    code: number,
-    error: string,
-    message: string,
-    description?: string
-    info?: any
+export enum ErrorType {
+    BAD_REQUEST= 400,
+    UNAUTHORIZED = 401,
+    PAYMENT_REQUIRED = 402,
+    FORBIDDEN = 403,
+    NOT_FOUND = 404,
+    METHOD_NOT_ALLOWED = 405,
+    NOT_ACCEPTABLE = 406,
+    PROXY_AUTHENTICATION_REQUIRED = 407,
+    REQUEST_TIMEOUT = 408,
+    CONFLICT = 409,
+    GONE = 410,
+    LENGTH_REQUIRED= 411,
+    PRECONDITION_FAILED = 412,
+    PAYLOAD_TOO_LARGE = 413,
+    URI_TOO_LONG = 414,
+    UNSUPPORTED_MEDIA_TYPE = 415,
+    RANGE_NOT_SATISFIABLE = 416,
+    EXPECTATION_FAILED = 417,
+    MISDIRECTED_REQUEST = 421,
+    UNPROCESSABLE_ENTITY = 422,
+    LOCKED = 423,
+    FAILED_DEPENDENCY = 424,
+    TOO_EARLY = 425,
+    UPGRADE_REQUIRED = 426,
+    PRECONDITION_REQUIRED = 428,
+    TOO_MANY_REQUESTS = 429,
+    REQUEST_HEADER_FIELDS_TOO_LARGE= 431,
+    UNAVAILABLE_FOR_LEGAL_REASONS = 451,
+    INTERNAL_SERVER_ERROR = 500,
+    NOT_IMPLEMENTED = 501,
+    BAD_GATEWAY = 502,
+    SERVICE_UNAVAILABLE = 503,
+    GATEWAY_TIMEOUT = 504,
+    HTTP_VERSION_NOT_SUPPORTED = 505,
+    VARIANT_ALSO_NEGOTIATES = 506,
+    INSUFFICIENT_STORAGE = 507,
+    LOOP_DETECTED = 508,
+    BANDWIDTH_LIMIT_EXCEEDED = 509,
+    NOT_EXTENDED = 510,
+    NETWORK_AUTHENTICATION_REQUIRED = 511
 }
 
-export function BAD_REQUEST(message: string, description?: string, info?: any) : API_ERROR {
-    return {
-        code: 400,
-        error: "Bad Request",
-        message: message,
-        description: description,
-        info: info
-    }
-}
+export type ErrorTypeName = keyof typeof ErrorType;
 
-export function UNAUTHORIZED(message: string, description?: string, info?: any) : API_ERROR {
-    return {
-        code: 401,
-        error: "Unauthorized",
-        message: message,
-        description: description,
-        info: info
-    }
-}
+export type ErrorFunction = (errorType: ErrorTypeName, description?: string, information?: any) => void;
 
-export function FORBIDDEN(message: string, description?: string, info?: any) : API_ERROR {
-    return {
-        code: 401,
-        error: "Forbidden",
-        message: message,
-        description: description,
-        info: info
-    }
-}
-
-export function NOT_FOUND(message: string, description?: string, info?: any) : API_ERROR {
-    return {
-        code: 404,
-        error: "Not Found",
-        message: message,
-        description: description,
-        info: info
-    }
-}
-
-export function METHOD_NOT_ALLOWED(message: string, description?: string, allowed?: string[]) : API_ERROR {
-    return {
-        code: 405,
-        error: "Method not allowed",
-        message: message,
-        description: description,
-        info: {
-            allowed: allowed
+export default function errorFunction(req: express.Request, res: express.Response, next: express.NextFunction): ErrorFunction {
+    return (errorType, description, information) => {
+        let responseObj = {
+            code: ErrorType[errorType],
+            error: errorType,
+            message: description,
+            info: information
         }
-    }
-}
-
-export function INTERNAL_SERVER_ERROR(message: string, description?: string, info?: any) : API_ERROR {
-    return {
-        code: 500,
-        error: "Internal Server Error",
-        message: message,
-        description: description,
-        info: info
+        let str = JSON.stringify(responseObj, null, 4);
+        res.status(ErrorType[errorType]).contentType("application/json").send(str);
+        return;
     }
 }

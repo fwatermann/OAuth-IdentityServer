@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import express from "express";
-import {OAuthTokenScopeInfo} from "../database/OAuth/Token";
 import config from "../config/config.json";
 import crypto from "crypto";
 import {OAuth__Scope} from "../database/Database";
@@ -11,7 +10,7 @@ export type FilledPage = {
     name: string,
     nonce: string[],
     source: string;
-}
+}|null
 
 let cache = new Map();
 export type SettingsPages = "settings.html"|UserSettingsPages;
@@ -50,10 +49,19 @@ export type Placeholders<T extends Templates> =
         ? {
 
         } :
-    never;
+    {};
 
 export function templateSource<T extends Templates>(file: T, ins: Placeholders<T>): FilledPage {
-    let source : string = cache.has(file) ? cache.get(file) : cache.set(file, fs.readFileSync(path.join(__dirname, "../public", file), "utf8")).get(file);
+
+    let source: string = cache.get(file) as string|undefined;
+    if(!source) {
+        try {
+            source = fs.readFileSync(path.join(__dirname, "../public", file), "utf8");
+            cache.set(file, source);
+        } catch(e) {
+            return null;
+        }
+    }
     let inserts = {...ins, ...config.ui.globalPlaceholder}
     let ret : FilledPage = {
         name: file,
@@ -191,6 +199,10 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
 export default function template<T extends Templates>(file: T, ins: Placeholders<T>, req : express.Request, res: express.Response, next: express.NextFunction): void {
     try {
         let page = templateSource(file, ins);
+        if(page == null) {
+            res.error("NOT_FOUND");
+            return;
+        }
         let cspHeader = res.getHeader("Content-Security-Policy") as string;
         for(let nonce of page.nonce) {
             cspHeader += ` '${nonce}'`;

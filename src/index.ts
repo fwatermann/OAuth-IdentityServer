@@ -5,12 +5,12 @@ import routerOAuth from "./routes/oauth";
 import routerAccount from "./routes/settings";
 import path from "path";
 import cookieParser from "cookie-parser";
-import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./errors";
 import config from "./config/config.json";
 import morgan from "morgan";
 import helmet from "helmet";
 import UserParser from "./Util/MiddlewareParseUser";
 import ServerHeader from "./Util/MiddlewareServerHeader";
+import FunctionInjector from "./Util/MiddlewareFunctionInject";
 import * as Database from "./database/Database";
 
 const app = express();
@@ -27,6 +27,7 @@ app.use(helmet({
 }));
 
 app.use(ServerHeader(config.ui.globalPlaceholder.serviceName));
+app.use(FunctionInjector);
 
 app.use(express.json({
     strict: true,
@@ -56,11 +57,11 @@ app.use("/settings", routerAccount);
 
 function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
     console.error(err);
-    res.status(500).json(INTERNAL_SERVER_ERROR("Exception while handling request.", "The server has run into an exception. Please try again later.", err));
+    res.error("INTERNAL_SERVER_ERROR", "The server has run into an exception. Please try again later.", (err as Error).name);
 }
 
 app.use(errorHandler);
-app.use((req, res, next) => res.status(404).json(NOT_FOUND("Page/Endpoint not found.", "The requested url does not exist.")))
+app.use((req, res, next) => res.error("NOT_FOUND", "The requested url does not exist."));
 
 app.listen(config.server.port, () => {
     Database.init();
