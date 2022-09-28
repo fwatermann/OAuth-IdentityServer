@@ -5,6 +5,7 @@ import {OAuthTokenScopeInfo} from "../database/OAuth/Token";
 import config from "../config/config.json";
 import crypto from "crypto";
 import {OAuth__Scope} from "../database/Database";
+import {UserSettingsPages} from "./settings/User";
 
 export type FilledPage = {
     name: string,
@@ -13,7 +14,7 @@ export type FilledPage = {
 }
 
 let cache = new Map();
-export type SettingsPages = "settings.html"|"settings/profile.html";
+export type SettingsPages = "settings.html"|UserSettingsPages;
 export type Templates = "login.html"|"authorize.html"|SettingsPages;
 
 export type Placeholders<T extends Templates> =
@@ -45,7 +46,7 @@ export type Placeholders<T extends Templates> =
             profileDisplayname: string,
             permissions: string[]
         } :
-    T extends "settings/profile.html"
+    T extends "settings/user/profile.html"
         ? {
 
         } :
