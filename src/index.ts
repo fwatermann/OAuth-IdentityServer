@@ -9,18 +9,13 @@ import {INTERNAL_SERVER_ERROR, NOT_FOUND} from "./errors";
 import config from "./config/config.json";
 import morgan from "morgan";
 import helmet from "helmet";
+import UserParser from "./Util/MiddlewareParseUser";
+import ServerHeader from "./Util/MiddlewareServerHeader";
 import * as Database from "./database/Database";
-import * as OAuth from "./database/OAuthDB";
 
 const app = express();
 
-interface ParsedQs {
-    [key: string]: undefined | string | string[] | ParsedQs | ParsedQs[]
-}
-
-const logger = morgan("[:date[iso]] :method :url :status :res[content-length] - :response-time ms");
-
-app.use(logger);
+app.use(morgan("[:date[iso]] :method :url :status :res[content-length] - :response-time ms"));
 app.use(helmet({
     hidePoweredBy: true,
     contentSecurityPolicy: {
@@ -31,11 +26,7 @@ app.use(helmet({
     }
 }));
 
-app.use((req, res, next) => {
-    res.setHeader("Server", config.ui.globalPlaceholder.serviceName.trim() + " Server")
-    next();
-});
-
+app.use(ServerHeader(config.ui.globalPlaceholder.serviceName));
 
 app.use(express.json({
     strict: true,
@@ -50,21 +41,7 @@ app.use(cookieParser(config.secret.session_secret, {
         return Buffer.from(val, "base64").toString("utf8");
     }
 }));
-app.use(async (req, res, next) => {
-    if(req.signedCookies[config.session.cookie.name]) {
-        try {
-            req.session = JSON.parse(req.signedCookies[config.session.cookie.name]);
-            if(req.session) {
-                req.user = await OAuth.User.get(req.session.sessionUser);
-            }
-        } catch(e) {
-            console.error("Error while parsing session cookie: ", e);
-            next();
-            return;
-        }
-    }
-    next();
-});
+app.use(UserParser);
 
 app.use("/assets/", express.static(path.join(__dirname, "public", "assets"), {
     etag: false,
