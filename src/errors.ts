@@ -27,6 +27,16 @@ export function UNAUTHORIZED(message: string, description?: string, info?: any) 
     }
 }
 
+export function FORBIDDEN(message: string, description?: string, info?: any) : API_ERROR {
+    return {
+        code: 401,
+        error: "Forbidden",
+        message: message,
+        description: description,
+        info: info
+    }
+}
+
 export function NOT_FOUND(message: string, description?: string, info?: any) : API_ERROR {
     return {
         code: 404,
