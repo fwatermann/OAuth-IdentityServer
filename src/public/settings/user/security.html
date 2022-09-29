@@ -1,0 +1,74 @@
+<link rel="stylesheet" href="/assets/css/settings/user/security.css">
+
+<div class="security-container">
+
+    <!--BEGIN: Password -->
+
+    <div class="card password_settings">
+        <div class="card-header">
+            <h2 class="card-title">Change password</h2>
+        </div>
+        <div class="card-body">
+            <input type="password" name="current_password" placeholder="Current password">
+            <input type="password" name="new_password" placeholder="New password">
+            <input type="password" name="confirm_password" placeholder="Config password">
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-2x success">Save</button>
+        </div>
+    </div>
+
+    <!--End: Password -->
+
+    <!--BEGIN: 2FA Settings -->
+    <div class="card mfa_settings danger">
+        <div class="card-header">
+            <h2 class="card-title">2FA Settings</h2>
+        </div>
+{{?!this.user.mfa}}
+        <div class="card-body">
+            <p>It is highly recommended to enable two-factor authentication. It provides extra protection against
+                stealing your account.</p>
+            <span>Click on image to revile QRCode.</span>
+            <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/eye-slash.svg"
+                 alt="2FA Secret QRCode" class="blind">
+            <img draggable="false" src="{{mfa_qrCodeURI}}" alt="2FA Secret QRCode" class="d-none">
+            <span class="mfa_secret_text text-password">{{mfa_secret}}</span>
+        </div>
+        <div class="card-body step_2fa_enable">
+            <div class="twoFA_input">
+                <input type="number" name="digit_0" min="0" max="9" maxlength="1" placeholder="X" autofocus>
+                <input type="number" name="digit_1" min="0" max="9" maxlength="1" placeholder="X">
+                <input type="number" name="digit_2" min="0" max="9" maxlength="1" placeholder="X">
+                <input type="number" name="digit_3" min="0" max="9" maxlength="1" placeholder="X">
+                <input type="number" name="digit_4" min="0" max="9" maxlength="1" placeholder="X">
+                <input type="number" name="digit_5" min="0" max="9" maxlength="1" placeholder="X">
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn success btn-2x" id="mfa_enable">Enable</button>
+            <input type="hidden" name="mfa_secret" value="{{mfa_secret}}">
+        </div>
+{{/?}}
+{{?this.user.mfa}}
+        <div class="card-body">
+            <p>You have enabled two-factor authentication already. Great!</p>
+            <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/lock.svg" alt="2FA Locked"
+                 class="blind">
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-2x danger">Disable</button>
+        </div>
+{{/?}}
+        <div class="card-overlay d-none">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <!--END: 2FA Settings -->
+
+</div>

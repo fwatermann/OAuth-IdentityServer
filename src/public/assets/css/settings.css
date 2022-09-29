@@ -142,6 +142,7 @@ body {
     display: flex;
     flex-flow: column nowrap;
     flex-grow: 1;
+    max-height: 100vH;
 }
 
 .container-head {
@@ -180,6 +181,7 @@ body {
 .container-body {
     display: flex;
     flex-grow: 1;
+    overflow: auto;
 }
 
 .container-footer {

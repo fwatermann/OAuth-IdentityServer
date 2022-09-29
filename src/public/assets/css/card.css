@@ -5,24 +5,72 @@
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     border-radius: 5px;
-    padding: 50px;
     background-color: #ffffff;
     overflow: hidden;
 }
+
+.card.danger {
+    box-shadow: 0 4px 10px rgba(255,0,0,0.5);
+}
+
+/* BEGIN: Card Header */
+
 .card-header {
     display: flex;
-    width: 100%;
     flex-flow: row nowrap;
     align-items: center;
-    margin-bottom: 20px;
     user-select: none;
     justify-content: space-between;
+    padding: 10px 10px;
 }
+
+.card-header:not(.no-bg) {
+    background-color: #00000011;
+}
+
+.card.danger .card-header:not(.no-bg) {
+    background-color: #ff000022;
+}
+
+.card-title {
+    text-align: start;
+    margin: 0;
+}
+
+/* END: Card Header */
+
+/* BEGIN: Card Body */
+
 .card-body {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
+    padding: 10px 25px;
 }
+
+/* END: Card Body */
+
+/* Begin: Card Footer */
+
+.card-footer {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 10px;
+    user-select: none;
+}
+
+.card-footer:not(.no-bg) {
+    background-color: #00000011;
+}
+
+.card.danger .card-footer:not(.no-bg) {
+    background-color: #ff000022;
+}
+
+/* END: Card Footer */
+
 
 .card-overlay {
     position: absolute;

@@ -3,7 +3,7 @@ import path from 'path';
 import express from "express";
 import config from "../config/config.json";
 import crypto from "crypto";
-import {OAuth__Scope} from "../database/Database";
+import {OAuth__Scope, OAuth__User} from "../database/Database";
 import {UserSettingsPages} from "./settings/User";
 
 export type FilledPage = {
@@ -49,9 +49,22 @@ export type Placeholders<T extends Templates> =
         ? {
 
         } :
+    T extends "settings/user/details.html"
+        ? {
+
+        } :
+    T extends "settings/user/security.html"
+        ? {
+            mfa_qrCodeURI: string
+            mfa_secret: string
+        } :
+    T extends "settings/user/access.html"
+        ? {
+
+        } :
     {};
 
-export function templateSource<T extends Templates>(file: T, ins: Placeholders<T>): FilledPage {
+export function templateSource<T extends Templates>(file: T, ins: Placeholders<T>, user?: OAuth__User): FilledPage {
 
     let source: string = cache.get(file) as string|undefined;
     if(!source) {
@@ -62,7 +75,7 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
             return null;
         }
     }
-    let inserts = {...ins, ...config.ui.globalPlaceholder}
+    let inserts = {...ins, ...config.ui.globalPlaceholder, user: user};
     let ret : FilledPage = {
         name: file,
         source: "",
@@ -198,7 +211,7 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
 
 export default function template<T extends Templates>(file: T, ins: Placeholders<T>, req : express.Request, res: express.Response, next: express.NextFunction): void {
     try {
-        let page = templateSource(file, ins);
+        let page = templateSource(file, ins, req.user);
         if(page == null) {
             res.error("NOT_FOUND");
             return;

@@ -1,5 +1,7 @@
 @import "card.css";
 @import "spinner.css";
+@import "forms.css";
+@import "toptInput.css";
 
 body {
     padding: 0;
@@ -19,13 +21,8 @@ body {
     user-select: none;
 }
 
-input[type=text], input[type=password] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
+.card-header {
+    padding: 20px 25px 10px;
 }
 
 button.login_btn {
@@ -84,31 +81,4 @@ span.error_message {
     text-align: center;
     margin-bottom: 5px;
     font-weight: bold;
-}
-
-.twoFA_input {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    column-gap: 2px;
-}
-
-.twoFA_input input[type=number] {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 20px;
-    text-align: center;
-    font-size: 24px;
-    padding: 15px 10px;
-    border: solid 4px #88888888;
-    border-radius: 10px;
-}
-
-.twoFA_input input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-}
-.twoFA_input input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
 }

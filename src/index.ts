@@ -20,7 +20,7 @@ app.use(helmet({
     hidePoweredBy: true,
     contentSecurityPolicy: {
         directives: {
-            "default-src": "'self' " + config.security.allowedResourceOrigins.join(" ")
+            "default-src": "'self' data: " + config.security.allowedResourceOrigins.join(" ")
         },
         useDefaults: false
     }

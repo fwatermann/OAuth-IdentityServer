@@ -1,10 +1,14 @@
 :root {
+    --color-success: #4CAF50;
+    --color-success-hover: #327536;
     --color-danger: #ff2828;
+    --color-danger-hover: #e12222;
     --color-warning: #ff8028;
     --color-info: #28d0ff;
     --color-secondary: #b7b7b7;
     --color-primary: #007cc4;
 
+    --text-color-success: #ffffff;
     --text-color-danger: #ffffff;
     --text-color-warning: #000000;
     --text-color-info: #000000;
@@ -21,6 +25,19 @@
     border: 1px solid #ffffff44;
     color: black;
     box-shadow: 0 2px 5px 0 #00000044;
+    cursor: pointer;
+
+    transition-property: background-color;
+    transition-timing-function: ease;
+    transition-duration: .25s;
+}
+
+.btn.btn-2x {
+    font-size: 1.1em;
+}
+
+.btn.btn-4x {
+    font-size: 1.2em;
 }
 
 .btn.round {
@@ -31,6 +48,17 @@
 .btn.danger {
     background-color: var(--color-danger);
     color: var(--text-color-danger);
+}
+.btn.danger:hover {
+    background-color: var(--color-danger-hover);
+}
+
+.btn.success {
+    background-color: var(--color-success);
+    color: var(--text-color-success);
+}
+.btn.success:hover {
+    background-color: var(--color-success-hover);
 }
 
 a.btn {
