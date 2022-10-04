@@ -28,6 +28,10 @@ function login(mfaToken = null) {
             }
         },
         error: (xhr, status, error) => {
+            if(xhr.status >= 500) {
+                postLogin(false, false, "Something went wrong while processing your request. Please try again later.")
+                return;
+            }
             postLogin(false, false, "Invalid username and/or password.");
         }
     });

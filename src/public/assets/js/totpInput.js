@@ -8,6 +8,7 @@ export function initField(element) {
             } else {
                 e.nextElementSibling?.focus();
             }
+            hideError(element);
         });
         e.addEventListener("paste", (event) => {
             const allowedChars = "0123456789";
@@ -22,6 +23,7 @@ export function initField(element) {
                 }
                 next = next.nextElementSibling;
             }
+            hideError(element);
         });
 
         e.addEventListener("keydown", (event) => {
@@ -30,6 +32,7 @@ export function initField(element) {
                     e.previousElementSibling?.focus();
                 }
             }
+            hideError(element);
         });
     });
 }
@@ -45,6 +48,26 @@ export function getCode(element, length=6) {
         if(!next) break;
     }
     return token;
+}
+
+export function showError(element, message) {
+    $(element).addClass("error");
+    $(element).find(".error_message").text(message);
+}
+
+export function hideError(element) {
+    $(element).removeClass("error");
+    $(element).find(".error_message").text("");
+}
+
+export function clearInput(element) {
+    let next = element.querySelector("input[type=number]");
+    while(next.previousElementSibling) next = next.previousElementSibling;
+    for(let i = 0; i < length; i ++) {
+        next.value = "";
+        next = next.nextElementSibling;
+        if(!next) break;
+    }
 }
 
 

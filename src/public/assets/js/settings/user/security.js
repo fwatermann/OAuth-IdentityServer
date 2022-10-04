@@ -5,7 +5,6 @@ export function init() {
 
     document.querySelector("#mfa_enable")?.addEventListener("click", (e) => {
         let token = TOTPInput.getCode(document.querySelector(".twoFA_input"));
-        alert(token);
     });
 
     $(".mfa_settings img").on("click", (e) => {
@@ -26,5 +25,14 @@ export function init() {
         }
     });
 
+    $("#mfa_enable").click("on", () => {
+        enable2FA();
+    });
+
     console.log("INIT: Security");
+}
+
+function enable2FA() {
+    let code = TOTPInput.getCode(document.querySelector(".twoFA_input"));
+    TOTPInput.showError(document.querySelector(".twoFA_input"), "Invalid token. Please try again.");
 }
