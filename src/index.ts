@@ -2,7 +2,8 @@ import express, {NextFunction, Request, Response} from "express";
 import routerLogin from "./routes/login";
 import routerLogout from "./routes/logout";
 import routerOAuth from "./routes/oauth";
-import routerAccount from "./routes/settings";
+import routerSettings from "./routes/settings";
+import routerAPI from "./routes/api";
 import path from "path";
 import cookieParser from "cookie-parser";
 import config from "./config/config.json";
@@ -53,7 +54,8 @@ app.use("/assets/", express.static(path.join(__dirname, "public", "assets"), {
 app.use("/login", routerLogin);
 app.use("/logout", routerLogout);
 app.use("/oauth", routerOAuth);
-app.use("/settings", routerAccount);
+app.use("/settings", routerSettings);
+app.use("/api", routerAPI);
 
 function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
     console.error(err);

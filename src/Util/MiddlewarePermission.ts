@@ -2,7 +2,7 @@ import express from "express";
 
 export default function requirePermission(...permissions: string[]): express.RequestHandler {
     return (req, res, next) => {
-        if(!req.user) {
+        if(!req.user || !req.loggedIn) {
             res.error("UNAUTHORIZED", "You need to be logged in to request this resource.")
             return;
         }

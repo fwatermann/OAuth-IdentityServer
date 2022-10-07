@@ -11,7 +11,7 @@ const router = express.Router();
 export default router;
 
 router.get("/", async (req, res, next) => {
-    if(req.session && req.user) {
+    if(req.session && req.loggedIn && req.user) {
         res.redirect((req.query.redirect_uri as string)??config.ui.login_redirect);
         return;
     }

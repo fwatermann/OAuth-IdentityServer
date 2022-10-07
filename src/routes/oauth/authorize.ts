@@ -111,7 +111,7 @@ router.post("/", async (req, res) => {
         return;
     }
 
-    if(!req.user) {
+    if(!req.user || !req.loggedIn) {
         res.redirect("/login?redirect_uri=" + encodeURIComponent(req.originalUrl));
         return;
     }
