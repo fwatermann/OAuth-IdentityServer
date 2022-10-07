@@ -27,6 +27,14 @@ export function initField(element) {
         });
 
         e.addEventListener("keydown", (event) => {
+            if(event.code === "ArrowLeft") {
+                e.previousElementSibling?.focus();
+                return;
+            }
+            if(event.code === "ArrowRight") {
+                e.nextElementSibling?.focus();
+                return;
+            }
             if(e.value?.length <= 0) {
                 if(event.key === "Backspace") {
                     e.previousElementSibling?.focus();

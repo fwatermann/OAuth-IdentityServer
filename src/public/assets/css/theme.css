@@ -1,0 +1,104 @@
+:root {
+    --color-success: #4CAF50;
+    --color-success-hover: #327536;
+    --color-success-active: #2B6A2F;
+    --color-success-pale: #80ff80;
+    --color-danger: #ff2828;
+    --color-danger-hover: #e12222;
+    --color-danger-active: #c81c1c;
+    --color-danger-pale: #ff8080;
+    --color-warning: #ff8028;
+    --color-warning-hover: #e16a22;
+    --color-warning-active: #c8541c;
+    --color-warning-pale: #ffbf80;
+    --color-info: #28d0ff;
+    --color-info-hover: #22b8e1;
+    --color-info-active: #1ca0c8;
+    --color-info-pale: #80ffff;
+    --color-secondary: #b7b7b7;
+    --color-secondary-hover: #9e9e9e;
+    --color-secondary-active: #858585;
+    --color-secondary-pale: #e6e6e6;
+    --color-primary: #007cc4;
+    --color-primary-hover: #005e8f;
+    --color-primary-active: #004a6e;
+    --color-primary-pale: #80bfff;
+
+    --text-color-success: #ffffff;
+    --text-color-danger: #ffffff;
+    --text-color-warning: #000000;
+    --text-color-info: #000000;
+    --text-color-secondary: #000000;
+    --text-color-primary: #ffffff;
+}
+
+.text-light {
+    color: #ffffff;
+}
+
+.text-dark {
+    color: #000000;
+}
+
+.text-success {
+    color: var(--color-success);
+}
+
+.text-danger {
+    color: var(--color-danger);
+}
+
+.text-warning {
+    color: var(--color-warning);
+}
+
+.text-info {
+    color: var(--color-info);
+}
+
+.text-secondary {
+    color: var(--color-secondary);
+}
+
+.text-primary {
+    color: var(--color-primary);
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.bg-light {
+    background-color: #ffffff;
+}
+
+.bg-dark {
+    background-color: #000000;
+}
+
+.bg-success {
+    background-color: var(--color-success-pale);
+}
+
+.bg-danger {
+    background-color: var(--color-danger-pale);
+}
+
+.bg-warning {
+    background-color: var(--color-warning-pale);
+}
+
+.bg-info {
+    background-color: var(--color-info-pale);
+}
+
+.bg-secondary {
+    background-color: var(--color-secondary-pale);
+}
+
+.bg-primary {
+    background-color: var(--color-primary-pale);
+}
+
+
+

@@ -1,9 +1,9 @@
-@import "/assets/css/card.css";
-@import "/assets/css/buttons.css";
-@import "/assets/css/toptInput.css";
-@import "/assets/css/passwordFont.css";
-@import "/assets/css/spinner.css";
-@import "/assets/css/forms.css";
+@import "../../card.css";
+@import "../../buttons.css";
+@import "../../toptInput.css";
+@import "../../passwordFont.css";
+@import "../../spinner.css";
+@import "../../forms.css";
 
 div.security-container {
     display: flex;
@@ -18,7 +18,7 @@ div.security-container {
 
 .mfa_settings {
     min-width: 250px;
-    max-width: 350px;
+    max-width: 400px;
 }
 
 .mfa_settings img {
@@ -42,9 +42,11 @@ div.security-container {
     width: 100%;
     text-align: center;
     text-wrap: avoid;
+    margin-bottom: 10px;
 }
 
 p {
     hyphens: auto;
-    text-align: justify;
+    text-align: start;
+    margin: 10px 0;
 }

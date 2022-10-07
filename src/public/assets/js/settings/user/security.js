@@ -1,32 +1,14 @@
+import "https://cdn.w-mi.de/jquery/jquery_v3.6.0/jquery.min.js";
 import * as TOTPInput from "/assets/js/totpInput.js";
+import * as modal from "/assets/js/modal.js";
 
 export function init() {
+    modal.initModals();
     TOTPInput.initField(document.querySelector(".twoFA_input"));
 
-    document.querySelector("#mfa_enable")?.addEventListener("click", (e) => {
-        let token = TOTPInput.getCode(document.querySelector(".twoFA_input"));
-    });
-
-    $(".mfa_settings img").on("click", (e) => {
-        let settingsContainer = $(".mfa_settings");
-        let qrCodeImg = $(".mfa_settings img:not(.blind)");
-        let blindImg = $(".mfa_settings img.blind");
-        let secretText = $(".mfa_settings .mfa_secret_text");
-        if(settingsContainer.attr("showCode") === "true") {
-            qrCodeImg.addClass("d-none");
-            blindImg.removeClass("d-none");
-            secretText.removeClass("show");
-            settingsContainer.attr("showCode", "false");
-        } else {
-            qrCodeImg.removeClass("d-none");
-            blindImg.addClass("d-none");
-            secretText.addClass("show");
-            settingsContainer.attr("showCode", "true");
-        }
-    });
-
-    $("#mfa_enable").click("on", () => {
-        enable2FA();
+    $("#btn_2fa_enable").click("on", () => {
+        modal.showModal("enable2fa");
+        //enable2FA();
     });
 
     console.log("INIT: Security");

@@ -1,33 +1,17 @@
-:root {
-    --color-success: #4CAF50;
-    --color-success-hover: #327536;
-    --color-danger: #ff2828;
-    --color-danger-hover: #e12222;
-    --color-warning: #ff8028;
-    --color-info: #28d0ff;
-    --color-secondary: #b7b7b7;
-    --color-primary: #007cc4;
-
-    --text-color-success: #ffffff;
-    --text-color-danger: #ffffff;
-    --text-color-warning: #000000;
-    --text-color-info: #000000;
-    --text-color-secondary: #000000;
-    --text-color-primary: #ffffff;
-}
+@import "theme.css";
 
 .btn {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    padding: 6px;
-    border-radius: 2px;
-    border: 1px solid #ffffff44;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: none;
     color: black;
     box-shadow: 0 2px 5px 0 #00000044;
     cursor: pointer;
 
-    transition-property: background-color;
+    transition-property: background-color, color;
     transition-timing-function: ease;
     transition-duration: .25s;
 }
@@ -52,6 +36,9 @@
 .btn.danger:hover {
     background-color: var(--color-danger-hover);
 }
+.btn.danger:active {
+    background-color: var(--color-danger-active);
+}
 
 .btn.success {
     background-color: var(--color-success);
@@ -59,6 +46,53 @@
 }
 .btn.success:hover {
     background-color: var(--color-success-hover);
+}
+.btn.success:active {
+    background-color: var(--color-success-active);
+}
+
+.btn.warning {
+    background-color: var(--color-warning);
+    color: var(--text-color-warning);
+}
+.btn.warning:hover {
+    background-color: var(--color-warning-hover);
+}
+.btn.warning:active {
+    background-color: var(--color-warning-active);
+}
+
+.btn.info {
+    background-color: var(--color-info);
+    color: var(--text-color-info);
+}
+.btn.info:hover {
+    background-color: var(--color-info-hover);
+}
+.btn.info:active {
+    background-color: var(--color-info-active);
+}
+
+.btn.secondary {
+    background-color: var(--color-secondary);
+    color: var(--text-color-secondary);
+}
+.btn.secondary:hover {
+    background-color: var(--color-secondary-hover);
+}
+.btn.secondary:active {
+    background-color: var(--color-secondary-active);
+}
+
+.btn.primary {
+    background-color: var(--color-primary);
+    color: var(--text-color-primary);
+}
+.btn.primary:hover {
+    background-color: var(--color-primary-hover);
+}
+.btn.primary:active {
+    background-color: var(--color-primary-active);
 }
 
 a.btn {

@@ -1,3 +1,5 @@
+@import "theme.css";
+
 .card {
     position: relative;
     display: flex;
@@ -8,10 +10,57 @@
     background-color: #ffffff;
     overflow: hidden;
 }
+/*
+    BEGIN: Theme Colors
+ */
 
 .card.danger {
-    box-shadow: 0 4px 10px rgba(255,0,0,0.5);
+    box-shadow: 0 4px 10px var(--color-danger);
 }
+.card.warning {
+    box-shadow: 0 4px 10px var(--color-warning);
+}
+.card.success {
+    box-shadow: 0 4px 10px var(--color-success);
+}
+.card.info {
+    box-shadow: 0 4px 10px var(--color-info);
+}
+.card.primary {
+    box-shadow: 0 4px 10px var(--color-primary);
+}
+.card.secondary {
+    box-shadow: 0 4px 10px var(--color-secondary);
+}
+
+.card-header:not(.no-bg) {
+    background-color: #00000011;
+}
+.card-footer:not(.no-bg) {
+    background-color: #00000011;
+}
+
+.card.danger .card-header:not(.no-bg), .card.danger .card-footer:not(.no-bg) {
+    background-color: var(--color-danger-pale);
+}
+.card.warning .card-header:not(.no-bg), .card.warning .card-footer:not(.no-bg) {
+    background-color: var(--color-warning-pale);
+}
+.card.success .card-header:not(.no-bg), .card.success .card-footer:not(.no-bg) {
+    background-color: var(--color-success-pale);
+}
+.card.info .card-header:not(.no-bg), .card.info .card-footer:not(.no-bg) {
+    background-color: var(--color-info-pale);
+}
+.card.primary .card-header:not(.no-bg), .card.primary .card-footer:not(.no-bg) {
+    background-color: var(--color-primary-pale);
+}
+.card.secondary .card-header:not(.no-bg), .card.secondary .card-footer:not(.no-bg) {
+    background-color: var(--color-secondary-pale);
+}
+/*
+    END: Theme Colors
+ */
 
 /* BEGIN: Card Header */
 
@@ -22,14 +71,6 @@
     user-select: none;
     justify-content: space-between;
     padding: 10px 10px;
-}
-
-.card-header:not(.no-bg) {
-    background-color: #00000011;
-}
-
-.card.danger .card-header:not(.no-bg) {
-    background-color: #ff000022;
 }
 
 .card-title {
@@ -59,14 +100,6 @@
     justify-content: flex-end;
     padding: 10px 10px;
     user-select: none;
-}
-
-.card-footer:not(.no-bg) {
-    background-color: #00000011;
-}
-
-.card.danger .card-footer:not(.no-bg) {
-    background-color: #ff000022;
 }
 
 /* END: Card Footer */

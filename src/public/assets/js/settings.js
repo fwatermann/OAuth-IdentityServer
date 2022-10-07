@@ -5,6 +5,7 @@ function initSettings() {
     menuEntries.attr("href", "#");
     menuEntries.on("click", (event) => {
         let target = $(event.target);
+        if(target.parent().hasClass("active")) return;
         let page = target.attr("menu");
         $(".menu-body .active").removeClass("active");
         target.parent().addClass("active");
