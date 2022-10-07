@@ -1,0 +1,52 @@
+@import "../../card.css";
+@import "../../buttons.css";
+@import "../../toptInput.css";
+@import "../../passwordFont.css";
+@import "../../spinner.css";
+@import "../../forms.css";
+
+div.security-container {
+    display: flex;
+    flex-grow: 1;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 25px;
+    column-gap: 25px;
+    row-gap: 25px;
+}
+
+.mfa_settings {
+    min-width: 250px;
+    max-width: 400px;
+}
+
+.mfa_settings img {
+    width: 200px;
+    aspect-ratio: 1;
+    margin: 10px auto;
+    border-radius: 10px;
+    background-color: #00000008;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.mfa_settings img.blind {
+    opacity: 25%;
+    background-color: #00000022;
+}
+
+.mfa_settings .mfa_secret_text {
+    font-size: .75em;
+    color: #00000088;
+    width: 100%;
+    text-align: center;
+    text-wrap: avoid;
+    margin-bottom: 10px;
+}
+
+p {
+    hyphens: auto;
+    text-align: start;
+    margin: 10px 0;
+}

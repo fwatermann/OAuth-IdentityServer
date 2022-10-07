@@ -3,7 +3,6 @@ import template from "./templates";
 import * as OAuthDB from "../database/OAuthDB";
 import * as Errors from "../errors";
 import config from "../config/config.json";
-import {METHOD_NOT_ALLOWED} from "../errors";
 import {Session} from "../types/Session";
 import crypto from "crypto";
 const node2fa = require("node-2fa");
@@ -12,7 +11,7 @@ const router = express.Router();
 export default router;
 
 router.get("/", async (req, res, next) => {
-    if(req.session && req.user) {
+    if(req.session && req.loggedIn && req.user) {
         res.redirect((req.query.redirect_uri as string)??config.ui.login_redirect);
         return;
     }
@@ -22,11 +21,11 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
     try {
         if(!req.body.username) {
-            res.status(400).send(Errors.BAD_REQUEST("Missing username.", "No username was provided in the request body"));
+            res.error("BAD_REQUEST", "Username is missing in request body.");
             return;
         }
         if(!req.body.password) {
-            res.status(400).send(Errors.BAD_REQUEST("Missing password.", "No password was provided in the request body"));
+            res.error("BAD_REQUEST", "Password is missing in request body.")
             return;
         }
         let username = req.body.username as string;
@@ -34,12 +33,12 @@ router.post("/", async (req, res, next) => {
 
         let user = await OAuthDB.User.getByUsername(username);
         if(user === null) {
-            res.status(401).send(Errors.UNAUTHORIZED("Invalid username or password.", "The username or password provided is incorrect."));
+            res.error("UNAUTHORIZED", "Invalid username or password.");
             return;
         }
         let checkPassword = OAuthDB.User.hashPassword(username, password) === user.password;
         if(!checkPassword) {
-            res.status(401).send(Errors.UNAUTHORIZED("Invalid username or password.", "The username or password provided is incorrect."));
+            res.error("UNAUTHORIZED", "Invalid username or password");
             return;
         }
 
@@ -92,7 +91,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.all("/", (req, res, next) => {
-    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
+    res.error("METHOD_NOT_ALLOWED", `This endpoint does not support "${req.method}"`);
 });
 
 

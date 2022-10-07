@@ -1,0 +1,70 @@
+.twoFA_input {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.twoFA_input > .fields {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 2px;
+}
+
+.twoFA_input input[type=number] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    text-align: center;
+    font-size: 24px;
+    padding: 15px 10px;
+    border: solid 4px #88888888;
+    border-radius: 10px;
+}
+
+.twoFA_input input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+.twoFA_input input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.twoFA_input.error input[type=number] {
+    transition-property: transform;
+    transition-duration: 0.1s;
+    transition-timing-function: ease;
+    animation-name: twoFA_error_shake;
+    animation-duration: 0.25s;
+    animation-timing-function: linear;
+
+    border: solid 4px var(--color-danger);
+}
+
+.twoFA_input.error .error_message {
+    text-align: center;
+    color: var(--color-danger);
+}
+
+.twoFA_input:not(.error) .error_message {
+    display: none;
+}
+
+@keyframes twoFA_error_shake {
+    0% {
+        transform: translateX(-10px);
+    }
+    25% {
+        transform: translateX(10px);
+    }
+    50% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
+    100% {
+        transform: translateX(-10px);
+    }
+}

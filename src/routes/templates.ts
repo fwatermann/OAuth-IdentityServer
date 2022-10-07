@@ -1,19 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 import express from "express";
-import {OAuthTokenScopeInfo} from "../database/OAuth/Token";
 import config from "../config/config.json";
 import crypto from "crypto";
-import {OAuth__Scope} from "../database/Database";
+import {OAuth__Scope, OAuth__User} from "../database/Database";
+import {UserSettingsPages} from "./settings/User";
 
 export type FilledPage = {
     name: string,
     nonce: string[],
     source: string;
-}
+}|null
 
 let cache = new Map();
-export type SettingsPages = "settings.html"|"settings/profile.html";
+export type SettingsPages = "settings.html"|UserSettingsPages;
 export type Templates = "login.html"|"authorize.html"|SettingsPages;
 
 export type Placeholders<T extends Templates> =
@@ -45,15 +45,37 @@ export type Placeholders<T extends Templates> =
             profileDisplayname: string,
             permissions: string[]
         } :
-    T extends "settings/profile.html"
+    T extends "settings/user/profile.html"
         ? {
 
         } :
-    never;
+    T extends "settings/user/details.html"
+        ? {
 
-export function templateSource<T extends Templates>(file: T, ins: Placeholders<T>): FilledPage {
-    let source : string = cache.has(file) ? cache.get(file) : cache.set(file, fs.readFileSync(path.join(__dirname, "../public", file), "utf8")).get(file);
-    let inserts = {...ins, ...config.ui.globalPlaceholder}
+        } :
+    T extends "settings/user/security.html"
+        ? {
+            mfa_qrCodeURI: string
+            mfa_secret: string
+        } :
+    T extends "settings/user/access.html"
+        ? {
+
+        } :
+    {};
+
+export function templateSource<T extends Templates>(file: T, ins: Placeholders<T>, user?: OAuth__User): FilledPage {
+
+    let source: string = cache.get(file) as string|undefined;
+    if(!source) {
+        try {
+            source = fs.readFileSync(path.join(__dirname, "../public", file), "utf8");
+            cache.set(file, source);
+        } catch(e) {
+            return null;
+        }
+    }
+    let inserts = {...ins, ...config.ui.globalPlaceholder, user: user};
     let ret : FilledPage = {
         name: file,
         source: "",
@@ -189,7 +211,11 @@ export function templateSource<T extends Templates>(file: T, ins: Placeholders<T
 
 export default function template<T extends Templates>(file: T, ins: Placeholders<T>, req : express.Request, res: express.Response, next: express.NextFunction): void {
     try {
-        let page = templateSource(file, ins);
+        let page = templateSource(file, ins, req.user);
+        if(page == null) {
+            res.error("NOT_FOUND");
+            return;
+        }
         let cspHeader = res.getHeader("Content-Security-Policy") as string;
         for(let nonce of page.nonce) {
             cspHeader += ` '${nonce}'`;

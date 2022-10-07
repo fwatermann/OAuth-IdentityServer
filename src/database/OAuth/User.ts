@@ -15,6 +15,7 @@ export async function create(username: string, displayName: string, password: st
 }
 
 export async function get(userId: string) : Promise<OAuth__User|null> {
+    if(!userId) return null;
     return await OAuth__User.findByPk(userId, {
         include: [
             {

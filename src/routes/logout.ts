@@ -1,7 +1,5 @@
 import express from "express";
-import * as OAuth from "../database/OAuthDB";
 import config from "../config/config.json";
-import {METHOD_NOT_ALLOWED} from "../errors";
 
 const router = express.Router();
 export default router;
@@ -18,5 +16,5 @@ router.get("/", async (req, res) => {
 });
 
 router.all("/", (req, res, next) => {
-    res.status(405).json(METHOD_NOT_ALLOWED("Invalid request method for this endpoint.", undefined, ["GET", "POST"]));
+    res.error("METHOD_NOT_ALLOWED", `This endpoint does not support "${req.method}"`);
 });

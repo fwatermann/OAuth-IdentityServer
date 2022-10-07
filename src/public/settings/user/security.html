@@ -1,0 +1,110 @@
+<link rel="stylesheet" href="/assets/css/settings/user/security.css">
+
+<div class="security-container">
+    <!--BEGIN: 2FA Settings -->
+{{?!this.user.mfa}}
+    <div class="card mfa_settings danger">
+        <div class="card-header">
+            <h2 class="card-title">Two-Factor Authentication</h2>
+            <i class="fas fa-shield-alt fa-2x fa-fw text-white"></i>
+        </div>
+        <div class="card-body">
+            <p class="text-bold">Two-Factor Authentication is currently disabled on your account!</p>
+            <p>We highly recommend to enable two-factory authentication to add extra security to your account.</p>
+            <p>To enable 2FA, click the button below.</p>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-2x success" id="btn_2fa_enable">Enable</button>
+        </div>
+        <div class="card-overlay d-none">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+{{/?}}
+{{?this.user.mfa}}
+    <div class="card mfa_settings success">
+        <div class="card-header">
+            <h2 class="card-title">2FA Settings</h2>
+            <i class="fas fa-check fa-2x fa-fw text-white"></i>
+        </div>
+        <div class="card-body">
+            <p>2FA is enabled</p>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-2x danger" id="btn_2fa_disable">Disable 2FA</button>
+        </div>
+        <div class="card-overlay d-none">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+{{/?}}
+    <!--END: 2FA Settings -->
+
+    <!--BEGIN: Password -->
+
+    <div class="card password_settings">
+        <div class="card-header">
+            <h2 class="card-title">Change password</h2>
+            <i class="fas fa-lock fa-2x fa-fw text-white"></i>
+        </div>
+        <div class="card-body">
+            <input type="password" name="current_password" placeholder="Current password">
+            <input type="password" name="new_password" placeholder="New password">
+            <input type="password" name="confirm_password" placeholder="Config password">
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-2x success">Save</button>
+        </div>
+    </div>
+
+    <!--End: Password -->
+
+    <modal mid="enable2fa" class="d-none">
+        <div class="card danger mfa_settings">
+            <div class="card-header">
+                <h2 class="card-title">Enabling 2FA</h2>
+            </div>
+            <div class="card-body">
+
+                <p>To enable two-factor authentication, scan the QR-Code or enter the secret below in your preferred authenticator app</p>
+                <img draggable="false" src="https://cdn.w-mi.de/icons/fontawesome/svgs/solid/qrcode.svg" alt="2FA Secret QRCode">
+                <span class="mfa_secret_text"></span>
+
+                <div class="twoFA_input">
+                    <span class="error_message">Wrong token. Please try again.</span>
+                    <div class="fields">
+                        <input type="number" name="digit_0" min="0" max="9" maxlength="1" placeholder="X" autofocus>
+                        <input type="number" name="digit_1" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_2" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_3" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_4" min="0" max="9" maxlength="1" placeholder="X">
+                        <input type="number" name="digit_5" min="0" max="9" maxlength="1" placeholder="X">
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-2x success">Enable 2FA</button>
+            </div>
+            <div class="card-overlay">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </modal>
+
+</div>
