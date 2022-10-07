@@ -1,9 +1,4 @@
-@import "../../card.css";
-@import "../../buttons.css";
 @import "../../toptInput.css";
-@import "../../passwordFont.css";
-@import "../../spinner.css";
-@import "../../forms.css";
 
 div.security-container {
     display: flex;

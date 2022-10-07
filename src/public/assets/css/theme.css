@@ -1,3 +1,9 @@
+@import "card.css";
+@import "tooltip.css";
+@import "buttons.css";
+@import "forms.css";
+@import "spinner.css";
+
 :root {
     --color-success: #4CAF50;
     --color-success-hover: #327536;
@@ -99,6 +105,43 @@
 .bg-primary {
     background-color: var(--color-primary-pale);
 }
+
+.d-none {
+    display: none;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-inline-flex {
+    display: inline-flex;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
 
 
 

@@ -69,8 +69,9 @@
 
     <!--End: Password -->
 
+{{?!this.user.mfa}}
     <modal mid="enable2fa" class="d-none">
-        <div class="card danger mfa_settings">
+        <div class="card primary mfa_settings no-shadow">
             <div class="card-header">
                 <h2 class="card-title">Enabling 2FA</h2>
             </div>
@@ -94,7 +95,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-2x success">Enable 2FA</button>
+                <button class="btn btn-2x success" id="modal_enable_2fa">Enable 2FA</button>
             </div>
             <div class="card-overlay">
                 <div class="lds-ring">
@@ -106,5 +107,32 @@
             </div>
         </div>
     </modal>
+{{/?}}
+{{?this.user.mfa}}
+    <modal mid="disable2fa" class="d-none">
+        <div class="card danger no-shadow">
+            <div class="card-header">
+                <h2 class="card-title">Disable 2FA</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-bold">Are you sure?</p>
+                <p>By disabling two-factory authentication you increase the risk of other people accessing your account.</p>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-2x danger" id="modal_disable_2fa">Disable</button>
+            </div>
+            <div class="card-overlay d-none">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </modal>
+{{/?}}
+
+
 
 </div>

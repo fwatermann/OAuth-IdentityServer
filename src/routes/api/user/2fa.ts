@@ -9,7 +9,6 @@ const router = express.Router();
 export default router;
 
 router.post("/", async (req, res, next) => {
-
     if(req.body.status) {
         if(req.body.status === "enable") {
             if(!req.body.secret) {
@@ -20,7 +19,7 @@ router.post("/", async (req, res, next) => {
                 res.error("BAD_REQUEST", "Missing code.");
                 return;
             }
-            let verified = Node2FA.verifyToken(req.body.secret, req.body.token);
+            let verified = Node2FA.verifyToken(req.body.secret, req.body.mfaCode);
             if(!verified) {
                 res.error("BAD_REQUEST", "2FA-Code is invalid.");
                 return;
@@ -48,9 +47,14 @@ router.post("/", async (req, res, next) => {
 
             res.noContent(); //Sends 204
             return;
+        } else {
+            res.error("BAD_REQUEST", "Invalid status.");
+            return;
         }
+    } else {
+        res.error("BAD_REQUEST", "Missing status.");
+        return;
     }
-
 });
 
 router.get("/data", async (req, res, next) => {

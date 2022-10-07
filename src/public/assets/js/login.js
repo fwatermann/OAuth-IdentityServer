@@ -24,13 +24,25 @@ function login(mfaToken = null) {
                 }
                 postLogin(true, data.redirect_uri);
             } else {
-                postLogin(false, false, "Invalid username and/or password.");
+                if(data.mfa) {
+                    TOTPInput.showError(document.querySelector(".twoFA_input"), "Invalid 2FA token.");
+                    postLogin(false, false, "Invalid 2FA token.");
+                } else {
+                    postLogin(false, false, "Invalid username and/or password.");
+                }
             }
         },
         error: (xhr, status, error) => {
             if(xhr.status >= 500) {
                 postLogin(false, false, "Something went wrong while processing your request. Please try again later.")
                 return;
+            } else if(xhr.status === 401) {
+                let body = JSON.parse(xhr.responseText);
+                if(body?.mfa) {
+                    TOTPInput.showError(document.querySelector(".twoFA_input"), "Invalid 2FA token.");
+                    postLogin(false, false, "Invalid 2FA token.");
+                    return;
+                }
             }
             postLogin(false, false, "Invalid username and/or password.");
         }
@@ -59,7 +71,7 @@ function postLogin(success, redirectURI, message) {
     if(success) {
         window.location.href = redirectURI;
     } else {
-        $("span.error_message").text(message);
+        $(".error_message").text(message);
         $(".card-overlay").addClass("d-none");
     }
 }
