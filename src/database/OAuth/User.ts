@@ -1,65 +1,56 @@
 import crypto from "crypto";
-import * as db from "../Database";
+import {ASSOCIATION_OAuth__User_UserPermission, OAuth__User} from "../Database";
 
-export type OAuthUser = {
-    userId: string,
-    username: string,
-    displayName: string,
-    passwordHash: string,
-    email: string,
-    mfa: boolean,
-    mfa_secret?: string,
-    created: number,
-    updated: number
-}
-
-export async function create(username: string, displayName: string, password: string, email: string): Promise<string> {
+export async function create(username: string, displayName: string, password: string, email: string): Promise<OAuth__User|null> {
     let passwordHash = hashPassword(username, password);
     let userId = crypto.randomUUID();
-    let response = await db.update("INSERT INTO OAuth__User (userId, username, displayName, password, email) VALUES (?, ?, ?, ?, ?)", [userId, username, displayName, passwordHash, email]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    return userId;
+    return await OAuth__User.create({
+        userId: userId,
+        username: username,
+        displayName: displayName,
+        password: passwordHash,
+        email: email,
+        mfa: false
+    });
 }
 
-export async function get(userId: string) : Promise<OAuthUser|null> {
-    let response = await db.query("SELECT * FROM OAuth__User WHERE userId = ? OR username = ?", [userId, userId]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
-    if(response.rows.length === 0) {
-        return null;
-    }
-    return {
-        userId: response.rows[0].userId,
-        username: response.rows[0].username,
-        displayName: response.rows[0].displayName,
-        passwordHash: response.rows[0].password,
-        email: response.rows[0].email,
-        mfa: response.rows[0].mfa == 1,
-        mfa_secret: response.rows[0].mfa_secret,
-        created: response.rows[0].created,
-        updated: response.rows[0].updated
-    }
+export async function get(userId: string) : Promise<OAuth__User|null> {
+    if(!userId) return null;
+    return await OAuth__User.findByPk(userId, {
+        include: [
+            {
+                association: ASSOCIATION_OAuth__User_UserPermission,
+                nested: true,
+                attributes: ["permission"]
+            }
+        ]
+    });
+}
+
+export async function getByUsername(username: string): Promise<OAuth__User|null> {
+    return await OAuth__User.findOne({
+        where: {
+            username: username
+        }
+    });
 }
 
 export async function checkPassword(username: string, password: string): Promise<boolean> {
     let passwordHash = hashPassword(username, password);
-    let response = await db.query("SELECT password FROM OAuth__User WHERE username = ?", [username]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    } else {
-        if(response.rows.length === 0) return false;
-        return response.rows[0].password === passwordHash;
-    }
+    return (await OAuth__User.findOne({
+        where: {
+            username: username,
+            password: passwordHash
+        }
+    })) != null;
 }
 
 export async function update2FA(userId: string, enabled: boolean, secret?: string) {
-    let response = await db.update("UPDATE OAuth__User SET `mfa` = ?, `mfa_secret` = ? WHERE `userId` = ?", [enabled ? 1 : 0, secret??"2FA-DISABLED", userId]);
-    if(response.error) {
-        throw new Error(response.error_message);
-    }
+    await OAuth__User.update({mfa: enabled, mfa_secret: secret}, {
+        where: {
+            userId: userId
+        }
+    });
 }
 
 export function hashPassword(username : string, password : string) : string {

@@ -1,0 +1,78 @@
+@import "../../toptInput.css";
+
+div.security-container {
+    display: flex;
+    flex-grow: 1;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 25px;
+    column-gap: 25px;
+    row-gap: 25px;
+}
+
+.mfa_settings {
+    min-width: 250px;
+    max-width: 400px;
+    order: 0;
+}
+
+.mfa_settings img {
+    width: 200px;
+    aspect-ratio: 1;
+    margin: 10px auto;
+    border-radius: 10px;
+    background-color: #00000008;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.mfa_settings img.blind {
+    opacity: 25%;
+    background-color: #00000022;
+}
+
+.mfa_settings .mfa_secret_text {
+    font-size: .75em;
+    color: #00000088;
+    width: 100%;
+    text-align: center;
+    text-wrap: avoid;
+    margin-bottom: 10px;
+}
+
+p {
+    hyphens: auto;
+    text-align: start;
+    margin: 10px 0;
+}
+
+.app {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+}
+
+.app span {
+    font-weight: bold;
+}
+
+.app .appstores {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.app .appstores > a {
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.app .appstores > a img.google_play {
+    height: 75px;
+}
+
+.app .appstores > a img.appstore {
+    height: 50px;
+}

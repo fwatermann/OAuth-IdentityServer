@@ -1,3 +1,5 @@
+import * as TOTPInput from "/assets/js/totpInput.js";
+
 function login(mfaToken = null) {
     let username = $("input[name=username]").val();
     let password = $("input[name=password]").val();
@@ -22,10 +24,26 @@ function login(mfaToken = null) {
                 }
                 postLogin(true, data.redirect_uri);
             } else {
-                postLogin(false, false, "Invalid username and/or password.");
+                if(data.mfa) {
+                    TOTPInput.showError(document.querySelector(".twoFA_input"), "Invalid 2FA token.");
+                    postLogin(false, false, "Invalid 2FA token.");
+                } else {
+                    postLogin(false, false, "Invalid username and/or password.");
+                }
             }
         },
         error: (xhr, status, error) => {
+            if(xhr.status >= 500) {
+                postLogin(false, false, "Something went wrong while processing your request. Please try again later.")
+                return;
+            } else if(xhr.status === 401) {
+                let body = JSON.parse(xhr.responseText);
+                if(body?.mfa) {
+                    TOTPInput.showError(document.querySelector(".twoFA_input"), "Invalid 2FA token.");
+                    postLogin(false, false, "Invalid 2FA token.");
+                    return;
+                }
+            }
             postLogin(false, false, "Invalid username and/or password.");
         }
     });
@@ -53,7 +71,8 @@ function postLogin(success, redirectURI, message) {
     if(success) {
         window.location.href = redirectURI;
     } else {
-        $("span.error_message").text(message);
+        $(".error_message").text(message);
+        $(".card-overlay").addClass("d-none");
     }
 }
 
@@ -74,53 +93,12 @@ function init() {
         preLogin();
     });
     $("button.mfa_btn").click((e) => {
-        let token = "";
-        let next = document.querySelector(".twoFA_input > input[type=number]");
-        while(next.previousElementSibling) next = e.previousElementSibling;
-        for(let i = 0; i < 6; i ++) {
-            token += next.value;
-            next = next.nextElementSibling;
-        }
+        let token = TOTPInput.getCode(document.querySelector(".twoFA_input"));
         console.log(token);
         $(".card-overlay").removeClass("d-none");
         setTimeout(() => login(token), 500);
-    })
-
-    document.querySelectorAll(".twoFA_input > input[type=number]").forEach((e) => {
-        e.addEventListener("input", (event) => {
-            e.value = event.data;
-            if(!event.data) {
-                e.previousElementSibling?.focus();
-            } else {
-                e.nextElementSibling?.focus();
-            }
-        });
-        e.addEventListener("paste", (event) => {
-            const allowedChars = "0123456789";
-            event.preventDefault();
-            let next = e;
-            while(next.previousElementSibling) next = e.previousElementSibling;
-            let content = event.clipboardData.getData("text").replaceAll(" ", "");
-            for(let i = 0; i < 6; i ++) {
-                if(allowedChars.indexOf(content.charAt(i)) >= 0) {
-                    next.focus();
-                    next.value = content.charAt(i);
-                }
-                next = next.nextElementSibling;
-            }
-        });
-
-        e.addEventListener("keydown", (event) => {
-
-            if(e.value?.length <= 0) {
-                if(event.key == "Backspace") {
-                    e.previousElementSibling?.focus();
-                }
-            }
-
-        });
     });
-
+    TOTPInput.initField(document.querySelector(".twoFA_input"));
 }
 
 init();
