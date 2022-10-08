@@ -2,9 +2,11 @@ import "https://cdn.w-mi.de/jquery/jquery_v3.6.0/jquery.min.js";
 
 const modalShowCSS = {
     'display': "flex",
-    'flex-flow': "row nowrap",
+    'flex-flow': "row wrap",
+    'column-gap': "10px",
+    'row-gap': "10px",
     'justify-content': "center",
-    "align-items": "center",
+    'align-items': "center",
     'position': "fixed",
     'top': "0",
     'left': "0",

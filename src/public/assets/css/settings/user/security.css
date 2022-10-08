@@ -1,9 +1,4 @@
-@import "../../card.css";
-@import "../../buttons.css";
 @import "../../toptInput.css";
-@import "../../passwordFont.css";
-@import "../../spinner.css";
-@import "../../forms.css";
 
 div.security-container {
     display: flex;
@@ -19,6 +14,7 @@ div.security-container {
 .mfa_settings {
     min-width: 250px;
     max-width: 400px;
+    order: 0;
 }
 
 .mfa_settings img {
@@ -49,4 +45,34 @@ p {
     hyphens: auto;
     text-align: start;
     margin: 10px 0;
+}
+
+.app {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+}
+
+.app span {
+    font-weight: bold;
+}
+
+.app .appstores {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.app .appstores > a {
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.app .appstores > a img.google_play {
+    height: 75px;
+}
+
+.app .appstores > a img.appstore {
+    height: 50px;
 }

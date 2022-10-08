@@ -9,7 +9,7 @@ const router = express.Router();
 export default router;
 
 router.get("/", (req, res, next) => {
-    if(!req.user && req.loggedIn) {
+    if(!req.user || !req.loggedIn) {
         res.redirect(`/login?redirect_uri=${encodeURIComponent("/settings")}`);
         return;
     }

@@ -1,7 +1,4 @@
-@import "card.css";
-@import "spinner.css";
-@import "tooltip.css";
-@import "buttons.css";
+@import "theme.css";
 
 body {
     padding: 0;

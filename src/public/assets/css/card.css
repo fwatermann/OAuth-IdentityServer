@@ -1,5 +1,3 @@
-@import "theme.css";
-
 .card {
     position: relative;
     display: flex;
@@ -10,6 +8,7 @@
     background-color: #ffffff;
     overflow: hidden;
 }
+
 /*
     BEGIN: Theme Colors
  */
@@ -120,6 +119,8 @@
     align-items: center;
 }
 
-.d-none {
-    display: none;
+/* BEGIN: Extras */
+
+.card.no-shadow {
+    box-shadow: none;
 }
