@@ -12,7 +12,7 @@
     "build": "tsc && npm run copy",
     "unix-copyHTML": "cp -rvu src/public/*.html dist/public/",
     "unix-copyAssets": "cp -rvu src/public/assets dist/public/assets",
-    "unix-copy": "npm run unix-copyHTML && npm run unix-copyAssets",
+    "unix-copy": "mkdir dist/public && npm run unix-copyHTML && npm run unix-copyAssets",
     "unix-build": "tsc && npm run unix-copy",
     "start": "node ./dist/index.js",
     "buildStart": "npm run build && npm run start",

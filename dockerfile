@@ -2,11 +2,16 @@ FROM node:lts-alpine as building
 
 WORKDIR /app
 COPY ./*.json /app/
+
+RUN apk add git
+RUN npm cache clean --force
+RUN npm install -g npm@latest
+
 RUN npm ci
 
 COPY ./src /app/src
 COPY ./config.template.json /app/src/config/config.json
-COPY ./*.* /app
+COPY ./*.* /app/
 RUN npm install typescript -g
 RUN npm run unix-build
 
