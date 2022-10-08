@@ -78,7 +78,8 @@ router.get("/data", async (req, res, next) => {
     res.status(200).json({
         "status": "disabled",
         "secret": secret.secret,
-        "qrCodeURL": qrCode
+        "qrCodeURL": qrCode,
+        "uri": secret.uri,
     });
 
 });

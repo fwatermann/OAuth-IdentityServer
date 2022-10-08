@@ -16,7 +16,9 @@ export function init() {
                 return;
             }
             $("modal[mid='enable2fa'] .mfa_secret_text").text(data.secret);
+            $("modal[mid='enable2fa'] .mfa_secret_text").attr("href", data.uri);
             $("modal[mid='enable2fa'] .card.mfa_settings img").attr("src", data.qrCodeURL);
+            $("modal[mid='enable2fa'] .card.mfa_settings a:not(.mfa_secret_text)").attr("href", data.uri);
             $("modal[mid='enable2fa'] .card .card-overlay").addClass("d-none");
         }).fail((xhr, textStatus, error) => {
             alert("FAIL");
