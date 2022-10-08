@@ -1,6 +1,7 @@
 import "https://cdn.w-mi.de/jquery/jquery_v3.6.0/jquery.min.js";
 import * as TOTPInput from "/assets/js/totpInput.js";
 import * as modal from "/assets/js/modal.js";
+import * as toast from "/assets/js/toasts.js";
 
 export function init() {
     modal.initModals();
@@ -15,7 +16,7 @@ export function init() {
                 return;
             }
             $("modal[mid='enable2fa'] .mfa_secret_text").text(data.secret);
-            $("modal[mid='enable2fa'] img").attr("src", data.qrCodeURL);
+            $("modal[mid='enable2fa'] .card.mfa_settings img").attr("src", data.qrCodeURL);
             $("modal[mid='enable2fa'] .card .card-overlay").addClass("d-none");
         }).fail((xhr, textStatus, error) => {
             alert("FAIL");

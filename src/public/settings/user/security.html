@@ -71,6 +71,48 @@
 
 {{?!this.user.mfa}}
     <modal mid="enable2fa" class="d-none">
+        <div class="d-flex flex-column">
+            <div class="card secondary no-shadow">
+                <div class="card-header">
+                    <h2 class="card-title">Apps for 2FA-Tokens</h2>
+                </div>
+                <div class="card-body">
+                    <div class="app">
+                        <span>Google Authenticator</span>
+                        <div class="appstores">
+                            <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">
+                                <img src="https://cdn.w-mi.de/icons/google/en_badge_web_generic.png" alt="Get it on Google Play" class="google_play">
+                            </a>
+                            <a href="https://apps.apple.com/de/app/google-authenticator/id388497605">
+                                <img src="https://cdn.w-mi.de/icons/apple/Download-on-the-App-Store/US/Download_on_App_Store/Black_lockup/SVG/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the AppStore" class="appstore">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="app">
+                        <span>Microsoft Authenticator</span>
+                        <div class="appstores">
+                            <a href="https://play.google.com/store/apps/details?id=com.azure.authenticator">
+                                <img src="https://cdn.w-mi.de/icons/google/en_badge_web_generic.png" alt="Get it on Google Play" class="google_play">
+                            </a>
+                            <a href="https://apps.apple.com/de/app/microsoft-authenticator/id983156458">
+                                <img src="https://cdn.w-mi.de/icons/apple/Download-on-the-App-Store/US/Download_on_App_Store/Black_lockup/SVG/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the AppStore" class="appstore">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="app">
+                        <span>Twilio Authy Authenticator</span>
+                        <div class="appstores">
+                            <a href="https://play.google.com/store/apps/details?id=com.authy.authy">
+                                <img src="https://cdn.w-mi.de/icons/google/en_badge_web_generic.png" alt="Get it on Google Play" class="google_play">
+                            </a>
+                            <a href="https://apps.apple.com/de/app/twilio-authy/id494168017">
+                                <img src="https://cdn.w-mi.de/icons/apple/Download-on-the-App-Store/US/Download_on_App_Store/Black_lockup/SVG/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the AppStore" class="appstore">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card primary mfa_settings no-shadow">
             <div class="card-header">
                 <h2 class="card-title">Enabling 2FA</h2>

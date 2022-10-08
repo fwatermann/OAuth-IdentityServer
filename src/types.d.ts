@@ -2,7 +2,6 @@ import {Session} from "./types/Session";
 import {OAuth__Token, OAuth__User} from "./database/Database";
 import {ErrorFunction} from "./errors";
 
-
 declare module "*.html";
 
 declare global {
